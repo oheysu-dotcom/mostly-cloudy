@@ -2,9 +2,9 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
 // ---------- Background: paper + symbol grid ----------
 // A light gray "paper" with faint water-stain lines, covered by a grid of small
-// colored symbols that fades in from the left. The whole grid is out of focus;
-// moving the cursor slowly brings the grid into focus along a lagging, fluid
-// trail, which fades back out over a few seconds.
+// colored symbols that fades in from the left and slowly shifts color. The whole
+// grid is out of focus; moving the cursor slowly brings it into focus along a
+// lagging, fluid trail, which fades back out over a few seconds.
 (function () {
   var canvas = document.querySelector(".backdrop");
   if (!canvas) return;
@@ -13,6 +13,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   var PAPER = "#bfbfbf";
   var CELL = 15;                   // grid spacing in px
   var FOCUS_SCALE = 16;            // the focus trail is stored at 1/16 size
+  var COLOR_SPEED = 0.12;          // how fast the colors shift
   var SYMBOLS = [
     // [chance, color, alpha]
     [0.62, "#dcd6d5", 0.5],        // faint light symbols (most of the grid)
@@ -23,7 +24,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   ];
 
   var W, H, dpr;
-  var paper, fog, soft, sharp, layer, focusA, focusB;
+  var paper, fog, soft, haze, fogMask, softMask, sharp, cells, layer, focusA, focusB;
 
   // ----- noise -----
   var perm = new Uint8Array(512);
@@ -73,25 +74,6 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     return small;
   }
 
-  function masked(source, maskCanvas) {
-    var out = makeCanvas(canvas.width, canvas.height), o = out.getContext("2d");
-    o.imageSmoothingEnabled = true;
-    o.drawImage(maskCanvas, 0, 0, out.width, out.height);
-    o.globalCompositeOperation = "source-in";
-    o.drawImage(source, 0, 0);
-    return out;
-  }
-
-  function blurred(source, factor, px) {
-    var w = Math.ceil(source.width / factor), h = Math.ceil(source.height / factor);
-    var small = makeCanvas(w, h), s = small.getContext("2d");
-    s.drawImage(source, 0, 0, w, h);
-    var out = makeCanvas(source.width, source.height), o = out.getContext("2d");
-    o.filter = "blur(" + px + "px)";
-    o.drawImage(small, 0, 0, out.width, out.height);
-    return out;
-  }
-
   function drawPaper() {
     paper = makeCanvas(canvas.width, canvas.height);
     var p = paper.getContext("2d");
@@ -129,25 +111,55 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     p.globalAlpha = 1;
   }
 
-  function drawSymbols() {
-    sharp = makeCanvas(canvas.width, canvas.height);
-    var s = sharp.getContext("2d");
-    s.scale(dpr, dpr);
+  // Each grid cell keeps its shape, but its color shifts over time. The color
+  // comes from a slowly drifting noise field, so changes roll across the grid in waves.
+  function makeCells() {
+    cells = [];
     var cols = Math.ceil(W / CELL) + 1, rows = Math.ceil(H / CELL) + 1;
     for (var r = 0; r < rows; r++) {
       for (var c = 0; c < cols; c++) {
-        var roll = Math.random(), pick = null;
-        for (var k = 0; k < SYMBOLS.length; k++) {
-          if (roll < SYMBOLS[k][0]) { pick = SYMBOLS[k]; break; }
-          roll -= SYMBOLS[k][0];
-        }
-        if (!pick) continue;
-        var cx = c * CELL + CELL / 2, cy = r * CELL + CELL / 2;
-        s.globalAlpha = pick[2] * (0.75 + Math.random() * 0.25);
-        s.fillStyle = s.strokeStyle = pick[1];
-        drawSymbol(s, Math.floor(Math.random() * 3), cx, cy, CELL);
+        cells.push({ c: c, r: r, seed: Math.random(), kind: Math.floor(Math.random() * 3), alpha: 0.75 + Math.random() * 0.25, color: -2 });
       }
     }
+    sharp = makeCanvas(canvas.width, canvas.height);
+  }
+
+  function colorFor(cell, t) {
+    var n = noise(cell.c * 0.09 + t * COLOR_SPEED, cell.r * 0.09 - t * COLOR_SPEED * 0.7);
+    var roll = (cell.seed + n * 2.2) % 1;
+    for (var k = 0; k < SYMBOLS.length; k++) {
+      if (roll < SYMBOLS[k][0]) return k;
+      roll -= SYMBOLS[k][0];
+    }
+    return -1; // empty cell
+  }
+
+  function updateSymbols(t) {
+    var s = sharp.getContext("2d");
+    s.setTransform(dpr, 0, 0, dpr, 0, 0);
+    for (var i = 0; i < cells.length; i++) {
+      var cell = cells[i], color = colorFor(cell, t);
+      if (color === cell.color) continue;
+      cell.color = color;
+      var x = cell.c * CELL, y = cell.r * CELL;
+      s.clearRect(x, y, CELL, CELL);
+      if (color < 0) continue;
+      s.globalAlpha = SYMBOLS[color][2] * cell.alpha;
+      s.fillStyle = s.strokeStyle = SYMBOLS[color][1];
+      drawSymbol(s, cell.kind, x + CELL / 2, y + CELL / 2, CELL);
+    }
+  }
+
+  // Blurry versions of the grid, made at small size each update so they follow the color changes
+  function updateBlur(small, maskCanvas, blurPx) {
+    var b = small.getContext("2d");
+    b.globalCompositeOperation = "source-over";
+    b.clearRect(0, 0, small.width, small.height);
+    b.filter = "blur(" + blurPx + "px)";
+    b.drawImage(sharp, 0, 0, small.width, small.height);
+    b.filter = "none";
+    b.globalCompositeOperation = "destination-in";
+    b.drawImage(maskCanvas, 0, 0, small.width, small.height);
   }
 
   function drawSymbol(s, kind, x, y, size) {
@@ -179,9 +191,13 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     canvas.height = Math.round(H * dpr);
 
     drawPaper();
-    drawSymbols();
-    fog = masked(blurred(sharp, 14 * dpr, 6 * dpr), mask(function (t) { return smooth(0.12, 0.45, t) * 0.55; }));
-    soft = masked(blurred(sharp, 6 * dpr, 2.5 * dpr), mask(function (t) { return smooth(0.36, 0.58, t) * 0.9; }));
+    makeCells();
+    fogMask = mask(function (t) { return smooth(0.12, 0.45, t) * 0.55; });
+    softMask = mask(function (t) { return smooth(0.36, 0.58, t) * 0.9; });
+    fog = makeCanvas(Math.ceil(W / 12), Math.ceil(H / 12));
+    soft = makeCanvas(Math.ceil(W / 5), Math.ceil(H / 5));
+    haze = makeCanvas(Math.ceil(W / 2), Math.ceil(H / 2));
+    refresh(performance.now() / 1000);
 
     layer = makeCanvas(canvas.width, canvas.height);
     focusA = makeCanvas(Math.ceil(W / FOCUS_SCALE), Math.ceil(H / FOCUS_SCALE));
@@ -227,8 +243,9 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   function render() {
     ctx.globalCompositeOperation = "source-over";
     ctx.drawImage(paper, 0, 0);
-    ctx.drawImage(fog, 0, 0);
-    ctx.drawImage(soft, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(haze, 0, 0, canvas.width, canvas.height);
 
     // Sharp grid, shown only along the cursor trail
     var l = layer.getContext("2d");
@@ -245,7 +262,27 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  function frame() {
+  function refresh(t) {
+    updateSymbols(t);
+    updateBlur(fog, fogMask, 0.5);
+    updateBlur(soft, softMask, 0.4);
+
+    // Combine both at half size with a real blur, so it reads soft instead of blocky
+    var h = haze.getContext("2d");
+    h.clearRect(0, 0, haze.width, haze.height);
+    h.imageSmoothingEnabled = true;
+    h.imageSmoothingQuality = "high";
+    h.filter = "blur(4px)";
+    h.drawImage(fog, 0, 0, haze.width, haze.height);
+    h.filter = "blur(1.5px)";
+    h.drawImage(soft, 0, 0, haze.width, haze.height);
+    h.filter = "none";
+  }
+
+  var tick = 0;
+  function frame(time) {
+    // Colors step at ~20 fps for a slightly choppy, ASCII-animation feel
+    if (++tick % 3 === 0) refresh(time / 1000);
     updateFocus();
     render();
     requestAnimationFrame(frame);
