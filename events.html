@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Events — Mostly Cloudy</title>
+  <meta name="description" content="Upcoming Mostly Cloudy events in San Francisco.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="has-overlay">
+  <main>
+    <p class="intro">
+      Mostly Cloudy is a San Francisco-based creative house whose scope expands across
+      talent representation, visual arts, nightlife experiences and music projects. With a
+      sharp focus on emerging queer and femme artists across the Latin diaspora, Mostly
+      Cloudy builds spaces where sounds, ideas, culture and art intersect.
+    </p>
+
+    <nav class="menu">
+      <a href="events.html"><span>#/ Events</span></a>
+      <a href="archive.html"><span>=* Archive</span></a>
+      <a href="artists.html"><span>.+ Artists</span></a>
+      <a href="shop.html"><span>--. Shop</span></a>
+      <div class="menu-item">
+        <span class="menu-label">%~ Music</span>
+        <small class="tag">Coming Soon</small>
+      </div>
+    </nav>
+
+    <ul class="contact">
+      <li>
+        <a href="mailto:talent@mostlycloudy.live">talent@mostlycloudy.live</a>
+        <small class="tag">for artist inquiries</small>
+      </li>
+      <li>
+        <a href="mailto:hello@mostlycloudy.live">hello@mostlycloudy.live</a>
+        <small class="tag">for other inquiries</small>
+      </li>
+    </ul>
+  </main>
+
+  <img class="bouncer" src="assets/logo.png" alt="Mostly Cloudy" aria-hidden="true">
+
+  <!-- Clicking anywhere outside the white panel goes back to the home page -->
+  <a class="overlay-close" href="index.html" aria-label="Close"></a>
+
+  <section class="overlay">
+    <header class="overlay-head">
+      <h1>Events</h1>
+      <a class="tag" href="#">More events ↗</a>
+    </header>
+
+    <p class="overlay-sub"><small class="tag">coming up...</small></p>
+
+    <!--
+      To add an event: copy one <article> block below, paste it, and change the text,
+      image and colors. "--accent" is the title box color, "--accent-text" its text color.
+    -->
+
+    <article class="event" style="--accent: #9a7466; --accent-text: #ffffff;">
+      <h2 class="event-title">EQ [ live ]</h2>
+      <img class="event-poster" src="assets/events/eq-live.jpg" alt="EQ live poster">
+      <div class="event-info">
+        <p class="event-venue">@The Great Northern</p>
+        <p class="event-when">Fri 11/6/26<br>10p-3a</p>
+      </div>
+    </article>
+
+    <article class="event" style="--accent: #827f81; --accent-text: #d4d4d4;">
+      <h2 class="event-title">Regal+10010</h2>
+      <img class="event-poster" src="assets/events/regal-10010.jpg" alt="Regal86 + 10010 poster">
+      <div class="event-info">
+        <p class="event-venue">@Monarch</p>
+        <p class="event-when">Sat 11/14/26<br>9p-3a</p>
+      </div>
+    </article>
+
+    <footer class="overlay-foot">
+      <svg class="ou" viewBox="0 0 60 36" aria-hidden="true">
+        <ellipse cx="30" cy="18" rx="28" ry="16" fill="none" stroke="currentColor" stroke-width="2"/>
+        <text x="30" y="24" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="17" letter-spacing="-1">ou</text>
+      </svg>
+    </footer>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

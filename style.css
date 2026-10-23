@@ -21,12 +21,16 @@ body {
 }
 
 main {
-  position: relative;
+  position: fixed;
+  inset: 0;
   z-index: 2;
-  height: 100vh;
-  height: 100dvh;
   padding: var(--gutter);
+  pointer-events: none; /* clicks fall through to the close layer... */
 }
+
+main > * { pointer-events: auto; } /* ...except on the text and links */
+
+body.has-overlay { overflow-y: auto; }
 
 /* Intro paragraph, top left */
 .intro {
@@ -118,6 +122,106 @@ main {
   will-change: transform;
 }
 
+/* ---------- Overlay pages (Events, Archive, ...) ---------- */
+
+:root {
+  --panel-text: #3a3a3a;
+  --rule: #d7d7d7;
+  --date-bg: #d8e1ec;
+}
+
+/* Invisible layer behind the panel: clicking it closes the overlay */
+.overlay-close {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.overlay {
+  position: relative;
+  z-index: 4;
+  width: 69vw;
+  margin: 41vh auto var(--gutter);
+  padding: 22px 22px 18px;
+  background: #fff;
+  color: var(--panel-text);
+}
+
+.overlay-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.overlay-head h1 {
+  color: var(--pink);
+  font-weight: 400;
+  font-size: clamp(18px, 1.15vw, 26px);
+  letter-spacing: -0.04em;
+}
+
+.overlay-head .tag { text-decoration: none; }
+.overlay-head .tag:hover { color: var(--pink); }
+
+.overlay-sub {
+  margin-top: 30px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* One event row: title | poster | details */
+.event {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px 12px;
+  align-items: start;
+  padding: 8px 0 26px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.event-title {
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  font-size: clamp(36px, 3.9vw, 90px);
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+  padding: 0.04em 0.03em 0.08em;
+  overflow-wrap: anywhere;
+}
+
+.event-poster {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.event-venue {
+  color: var(--accent);
+  font-size: clamp(18px, 1.2vw, 26px);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.event-when {
+  display: inline-block;
+  background: var(--date-bg);
+  color: #222;
+  font-weight: 500;
+  font-size: clamp(13px, 0.8vw, 16px);
+  line-height: 1.3;
+  padding: 0 2px;
+}
+
+.overlay-foot {
+  display: flex;
+  justify-content: center;
+  padding-top: 26px;
+}
+
+.overlay-foot .ou { width: 46px; color: #111; }
+.overlay-foot .ou text { fill: currentColor; }
+
 /* Phones */
 @media (max-width: 700px) {
   .intro { max-width: none; padding-right: 0; }
@@ -125,4 +229,11 @@ main {
     position: static;
     margin-top: 24px;
   }
+  .overlay {
+    width: auto;
+    margin: 60vh 8px 8px;
+    padding: 14px 12px;
+  }
+  .event { grid-template-columns: 1fr; padding-bottom: 20px; }
+  .event-title { font-size: 13vw; }
 }
