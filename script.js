@@ -2,8 +2,8 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
 // ---------- Background: paper + symbol grid ----------
 // A light gray "paper" with faint water-stain lines, covered by a grid of small
-// colored symbols that goes from blurry on the left to sharp on the right.
-// Moving the cursor slowly brings the grid into focus along a lagging, fluid
+// colored symbols that fades in from the left. The whole grid is out of focus;
+// moving the cursor slowly brings the grid into focus along a lagging, fluid
 // trail, which fades back out over a few seconds.
 (function () {
   var canvas = document.querySelector(".backdrop");
@@ -23,7 +23,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   ];
 
   var W, H, dpr;
-  var paper, fog, soft, sharp, sharpMask, layer, focusA, focusB;
+  var paper, fog, soft, sharp, layer, focusA, focusB;
 
   // ----- noise -----
   var perm = new Uint8Array(512);
@@ -53,7 +53,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     return c;
   }
 
-  // How "in focus" each part of the screen is: 0 = blurry left, 1 = sharp right
+  // How dense the grid is in each part of the screen: 0 = bare paper (left), 1 = full grid (right)
   function focusAt(x, y) {
     var t = (x / W) * 0.85 + (y / H) * 0.15 + (fbm(x / 260, y / 260) - 0.5) * 0.35;
     return t;
@@ -181,8 +181,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     drawPaper();
     drawSymbols();
     fog = masked(blurred(sharp, 14 * dpr, 6 * dpr), mask(function (t) { return smooth(0.12, 0.45, t) * 0.55; }));
-    soft = masked(blurred(sharp, 5 * dpr, 2 * dpr), mask(function (t) { return smooth(0.36, 0.58, t) * 0.9; }));
-    sharpMask = mask(function (t) { return smooth(0.55, 0.72, t); });
+    soft = masked(blurred(sharp, 6 * dpr, 2.5 * dpr), mask(function (t) { return smooth(0.36, 0.58, t) * 0.9; }));
 
     layer = makeCanvas(canvas.width, canvas.height);
     focusA = makeCanvas(Math.ceil(W / FOCUS_SCALE), Math.ceil(H / FOCUS_SCALE));
@@ -231,13 +230,11 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ctx.drawImage(fog, 0, 0);
     ctx.drawImage(soft, 0, 0);
 
-    // Sharp grid, shown where it's naturally in focus plus along the cursor trail
+    // Sharp grid, shown only along the cursor trail
     var l = layer.getContext("2d");
     l.globalCompositeOperation = "source-over";
     l.clearRect(0, 0, layer.width, layer.height);
     l.imageSmoothingEnabled = true;
-    l.drawImage(sharpMask, 0, 0, layer.width, layer.height);
-    l.globalCompositeOperation = "lighter";
     l.drawImage(focusA, 0, 0, layer.width, layer.height);
     l.globalCompositeOperation = "source-in";
     l.drawImage(sharp, 0, 0);
