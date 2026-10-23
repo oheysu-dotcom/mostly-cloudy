@@ -346,3 +346,37 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   if (logo.complete) start();
   else logo.addEventListener("load", start);
 })();
+
+// ---------- Archive galleries ----------
+// Puts each photo into whichever column is currently shortest, so the
+// columns end up close to the same height (like Cargo's columnized gallery).
+(function () {
+  var galleries = document.querySelectorAll(".gallery");
+
+  function layout(gallery) {
+    var imgs = gallery._imgs || (gallery._imgs = Array.prototype.slice.call(gallery.querySelectorAll("img")));
+    var count = parseInt(getComputedStyle(gallery).getPropertyValue("--cols"), 10) || 3;
+    if (window.innerWidth <= 700) count = 2;
+    if (gallery._count === count) return;
+    gallery._count = count;
+
+    gallery.innerHTML = "";
+    var cols = [], heights = [];
+    for (var i = 0; i < count; i++) {
+      var col = document.createElement("div");
+      col.className = "gallery-col";
+      gallery.appendChild(col);
+      cols.push(col);
+      heights.push(0);
+    }
+    imgs.forEach(function (img) {
+      var shortest = heights.indexOf(Math.min.apply(null, heights));
+      cols[shortest].appendChild(img);
+      heights[shortest] += img.getAttribute("height") / img.getAttribute("width");
+    });
+  }
+
+  function layoutAll() { Array.prototype.forEach.call(galleries, layout); }
+  window.addEventListener("resize", layoutAll);
+  layoutAll();
+})();

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artists — Mostly Cloudy</title>
+  <meta name="description" content="Artists represented by Mostly Cloudy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas class="backdrop" aria-hidden="true"></canvas>
+  <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
+
+  <!-- Clicking anywhere outside the panel goes back to the home page -->
+  <a class="overlay-close" href="index.html" aria-label="Close"></a>
+
+  <section class="overlay">
+    <header class="overlay-head">
+      <h1>Artists</h1>
+      <div class="overlay-actions">
+        <a class="tag" href="index.html" aria-label="Close">close ×</a>
+      </div>
+    </header>
+
+    <!--
+      To add an artist: copy one <article> block and change the name, bio, mix link and photo.
+      Add class "flip" to put the photo on the left (the rows alternate).
+    -->
+
+    <article class="artist">
+      <div class="artist-text">
+        <h2 class="artist-name">Julia Rose</h2>
+        <p class="artist-bio">Mostly Cloudy founder, Julia Rose, built this platform out of a love for music, an inspiration from her Latin roots, and a loyalty to her native city of San Francisco. Having shared lineups with artists like Rosa Pistola, Alírio, RHR and Only Fire, her forward-thinking blends of sensual Latin club varieties and left-field electronic sounds have established her as a fixture in the Bay Area’s nightlife scene.</p>
+        <a class="tag" href="https://www.youtube.com/watch?v=O3wMND2bOzo" target="_blank" rel="noopener">Link to mix ↗</a>
+      </div>
+      <img class="artist-photo" width="1000" height="1000" src="assets/artists/julia-rose.jpg" alt="Julia Rose" loading="lazy">
+    </article>
+
+    <article class="artist flip">
+      <div class="artist-text">
+        <h2 class="artist-name">Dina</h2>
+        <p class="artist-bio">Dina is an LA born and raised DJ who knows the city's tempo. With a blend of Reggaeton, Cumbiaton, Dembow, Guaracha, and Latin Club, her instinctive command of the room promises a packed, sweaty dance floor. Dina has played at esteemed festivals and parties like Para Siempre, Keep Hush, and has opened for artists such as Tokischa, Yeri Mua, Bolo, 3BallMTY, and Dani Flow. As a proud Latina and founder of Club Cielo and Una Noche de Perreo, Dina is helping shape underground LA dance culture, championing a femme-centered nightlife community that leaves room for everyone.</p>
+        <span class="tag">Link to mix ↗</span>
+      </div>
+      <img class="artist-photo" width="1000" height="1000" src="assets/artists/dina.jpg" alt="Dina" loading="lazy">
+    </article>
+
+    <article class="artist">
+      <div class="artist-text">
+        <h2 class="artist-name">felipe d.</h2>
+        <p class="artist-bio">Originally from Brazil, felipe d. is a San Francisco-based DJ moving between techno, club and the percussive edge of Brazilian electronic music. Rooted in the raw, relentless, and reverberating rave scene of São Paulo, he continuously reshapes queer nightlife in San Francisco with an experimental and energetic experience of distorted loops, unexpected turns and uncensored vocals. The long-time Mostly Cloudy resident has played alongside Alírio, Byrell The Great, COBRAH, Honey Dijon and River Moon, among others. In the past year, he has played in Los Angeles, New York City, Seattle and Washington D.C., as well as across the Bay Area at parties including Squish, BOOF, SXTPS, Rhonda, and more. With a growing presence both in the Bay Area and beyond, felipe d. continues to carve out his own space within the global club landscape.</p>
+        <a class="tag" href="https://www.youtube.com/watch?v=tNnNAi94ewg" target="_blank" rel="noopener">Link to mix ↗</a>
+      </div>
+      <img class="artist-photo" width="1000" height="1000" src="assets/artists/felipe-d.jpg" alt="felipe d." loading="lazy">
+    </article>
+
+    <footer class="overlay-foot">
+      <img class="ou" src="assets/ou.png" alt="">
+    </footer>
+  </section>
+  <main>
+    <p class="intro">
+      Mostly Cloudy is a San Francisco-based creative house whose scope expands across
+      talent representation, visual arts, nightlife experiences and music projects. With a
+      sharp focus on emerging queer and femme artists across the Latin diaspora, Mostly
+      Cloudy builds spaces where sounds, ideas, culture and art intersect.
+    </p>
+
+    <nav class="menu" aria-label="Main">
+      <span class="soon" tabindex="0" aria-label="Music, coming soon">MUSIC</span>
+      <span class="soon" tabindex="0" aria-label="Shop, coming soon">SHOP</span>
+      <a href="artists.html" aria-current="page">ARTISTS</a>
+      <a href="archive.html">ARCHIVE</a>
+      <a href="events.html">EVENTS</a>
+    </nav>
+
+    <ul class="contact">
+      <li><a class="tag" href="mailto:talent@mostlycloudy.live">artist inquiries &nbsp;→</a></li>
+      <li><a class="tag" href="mailto:hello@mostlycloudy.live">other inquiries &nbsp;→</a></li>
+    </ul>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
