@@ -125,8 +125,9 @@ body.has-overlay { overflow-y: auto; }
 /* ---------- Overlay pages (Events, Archive, ...) ---------- */
 
 :root {
-  --panel-text: #3a3a3a;
-  --rule: #d7d7d7;
+  --panel-bg: #564e2a;
+  --panel-text: #f2efe6;
+  --rule: rgba(255, 255, 255, 0.28);
   --date-bg: #d8e1ec;
 }
 
@@ -143,7 +144,7 @@ body.has-overlay { overflow-y: auto; }
   width: 69vw;
   margin: 41vh auto var(--gutter);
   padding: 22px 22px 18px;
-  background: #fff;
+  background: var(--panel-bg);
   color: var(--panel-text);
 }
 
@@ -197,7 +198,7 @@ body.has-overlay { overflow-y: auto; }
 }
 
 .event-venue {
-  color: var(--accent);
+  color: var(--panel-text);
   font-size: clamp(18px, 1.2vw, 26px);
   letter-spacing: -0.04em;
   line-height: 1.1;
@@ -219,7 +220,7 @@ body.has-overlay { overflow-y: auto; }
   padding-top: 26px;
 }
 
-.overlay-foot .ou { width: 46px; color: #111; }
+.overlay-foot .ou { width: 46px; color: var(--panel-text); }
 .overlay-foot .ou text { fill: currentColor; }
 
 /* Phones */
