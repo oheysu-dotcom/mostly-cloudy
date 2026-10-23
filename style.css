@@ -1,5 +1,5 @@
 :root {
-  --bg: #353534;
+  --bg: #bfbfbf;
   --text: #ffffff;
   --pink: #e7327a;
   --menu-bg: #acba91;
@@ -22,9 +22,9 @@ body {
   overflow: hidden;
 }
 
-/* ---------- Background: ASCII clouds + bouncing logo ---------- */
+/* ---------- Background: paper + symbol grid, bouncing logo ---------- */
 
-.ascii {
+.backdrop {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -60,11 +60,11 @@ main > * { pointer-events: auto; } /* ...except on the text and links */
   position: absolute;
   top: var(--split);
   left: var(--edge);
-  max-width: max(31vw, 300px);
+  max-width: max(24vw, 260px);
   font-weight: 500;
-  font-size: clamp(14px, 1.25vw, 22px);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-size: clamp(11px, 0.82vw, 14px);
+  line-height: 1.25;
+  letter-spacing: 0;
 }
 
 /* Menu: vertical stacked letters, right side */
@@ -267,7 +267,7 @@ a.tag:hover { color: var(--pink); }
 /* ---------- Phones ---------- */
 @media (max-width: 700px) {
   :root { --split: 52vh; }
-  .intro { max-width: calc(100% - 170px - var(--edge)); font-size: 14px; }
+  .intro { max-width: calc(100% - 170px - var(--edge)); font-size: 12px; }
   .menu { gap: 8px; font-size: 14px; }
   .overlay { padding: 12px; }
   .event { grid-template-columns: 1fr; }
