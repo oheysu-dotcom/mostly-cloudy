@@ -1,11 +1,14 @@
 :root {
-  --gray: #bfbfbf;
+  --bg: #353534;
   --text: #ffffff;
-  --pink: #ff0a7c;
-  --menu-bg: #a9ba8c;
-  --tag-bg: #f0f0f0;
-  --tag-text: #8c8c8c;
-  --gutter: clamp(12px, 0.75vw, 16px);
+  --pink: #e7327a;
+  --menu-bg: #acba91;
+  --tag-bg: #ffffff;
+  --tag-text: #9f9f9f;
+
+  --edge: clamp(14px, 2.1vw, 32px);   /* outer margin around everything */
+  --split: 64vh;                      /* where the bottom strip starts */
+  --gap: clamp(12px, 1.4vw, 22px);    /* space between overlay and bottom strip */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,114 +16,141 @@
 html, body { height: 100%; }
 
 body {
-  /* Placeholder until the real background image/video is added */
-  background: var(--gray) radial-gradient(ellipse at 65% 70%, #c9c6c4 0%, var(--gray) 60%) fixed;
+  background: var(--bg);
   color: var(--text);
   font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   overflow: hidden;
 }
 
+/* ---------- Background: ASCII clouds + bouncing logo ---------- */
+
+.ascii {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: block;
+}
+
+.bouncer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: clamp(150px, 17vw, 360px);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.45));
+  will-change: transform;
+}
+
+/* ---------- Bottom strip: intro, menu, inquiries ---------- */
+
 main {
   position: fixed;
   inset: 0;
   z-index: 2;
-  padding: var(--gutter);
-  pointer-events: none; /* clicks fall through to the close layer... */
+  pointer-events: none; /* clicks fall through to the background... */
 }
 
 main > * { pointer-events: auto; } /* ...except on the text and links */
 
-body.has-overlay { overflow-y: auto; }
-
-/* Intro paragraph, top left */
 .intro {
-  max-width: max(32vw, 420px);
-  font-size: clamp(16px, 1.2vw, 26px);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-}
-
-/* Menu, top right */
-.menu {
   position: absolute;
-  top: calc(var(--gutter) + 12px);
-  right: var(--gutter);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(8px, 1vw, 20px);
-  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 700;
-  font-size: clamp(20px, 1.5vw, 32px);
-  line-height: 1.1;
+  top: var(--split);
+  left: var(--edge);
+  max-width: max(31vw, 300px);
+  font-weight: 500;
+  font-size: clamp(14px, 1.25vw, 22px);
+  line-height: 1.2;
   letter-spacing: -0.01em;
 }
 
-.menu a,
-.menu-label {
-  color: var(--pink);
-  text-decoration: none;
-  background: var(--menu-bg);
-  padding: 0 0.05em;
+/* Menu: vertical stacked letters, right side */
+.menu {
+  position: absolute;
+  top: var(--split);
+  right: var(--edge);
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(10px, 1.3vw, 22px);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: clamp(13px, 1.05vw, 18px);
 }
 
-.menu a:hover { background: var(--pink); color: var(--menu-bg); }
+.menu a,
+.menu .soon {
+  position: relative;
+  display: block;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: -0.12em;
+  line-height: 1.15;
+  padding: 0.2em 0 0.3em;
+  color: var(--pink);
+  background: var(--menu-bg);
+  text-decoration: none;
+}
 
-.menu-item {
+.menu a:hover,
+.menu a[aria-current="page"] {
+  color: var(--menu-bg);
+  background: var(--pink);
+}
+
+.menu .soon { cursor: default; opacity: 0.75; }
+
+/* "coming soon" label that pops out on hover */
+.menu .soon::after {
+  content: "coming soon";
+  position: absolute;
+  top: 0;
+  right: calc(100% + 6px);
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+  font-family: "Inter Tight", Arial, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 1.3;
+  padding: 0 3px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.menu .soon:hover::after { opacity: 1; }
+
+/* Inquiries, bottom left */
+.contact {
+  position: absolute;
+  left: var(--edge);
+  bottom: var(--edge);
+  list-style: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
+  gap: clamp(8px, 0.9vw, 14px);
 }
 
-/* Small gray labels ("Coming Soon", "for artist inquiries") */
+/* Small white labels ("artist inquiries →", "coming up...") */
 .tag {
   display: inline-block;
   background: var(--tag-bg);
   color: var(--tag-text);
   font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
   font-weight: 500;
-  font-size: clamp(12px, 0.75vw, 15px);
-  line-height: 1.15;
-  letter-spacing: 0;
-  padding: 0 1px;
+  font-size: clamp(12px, 0.8vw, 15px);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  padding: 0 3px;
+  text-decoration: none;
 }
 
-/* Emails, bottom left */
-.contact {
-  position: absolute;
-  left: var(--gutter);
-  bottom: calc(var(--gutter) + 12px);
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(18px, 2vw, 40px);
-}
-
-.contact li { display: flex; flex-direction: column; align-items: flex-start; }
-
-.contact a {
-  color: var(--pink);
-  font-size: clamp(16px, 1.2vw, 26px);
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.contact a:hover { color: var(--text); }
-
-/* Bouncing DVD-style logo */
-.bouncer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: clamp(160px, 17vw, 380px);
-  height: auto;
-  pointer-events: none;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.6));
-  will-change: transform;
-}
+a.tag:hover { color: var(--pink); }
 
 /* ---------- Overlay pages (Events, Archive, ...) ---------- */
 
@@ -131,41 +161,52 @@ body.has-overlay { overflow-y: auto; }
   --date-bg: #d8e1ec;
 }
 
-/* Invisible layer behind the panel: clicking it closes the overlay */
+/* Invisible layer: clicking outside the panel closes the overlay */
 .overlay-close {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
 }
 
+/* The panel fills the top half, above the bottom strip */
 .overlay {
-  position: relative;
-  z-index: 4;
-  width: 69vw;
-  margin: 41vh auto var(--gutter);
-  padding: 22px 22px 18px;
+  position: fixed;
+  z-index: 3;
+  top: var(--edge);
+  left: var(--edge);
+  right: var(--edge);
+  height: calc(var(--split) - var(--edge) - var(--gap));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 22px 18px;
   background: var(--panel-bg);
   color: var(--panel-text);
+  animation: drop-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes drop-in {
+  from { transform: translateY(-14px); opacity: 0; }
+  to { transform: none; opacity: 1; }
 }
 
 .overlay-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 12px;
 }
 
 .overlay-head h1 {
   color: var(--pink);
-  font-weight: 400;
-  font-size: clamp(18px, 1.15vw, 26px);
-  letter-spacing: -0.04em;
+  font-weight: 500;
+  font-size: clamp(18px, 1.3vw, 26px);
+  letter-spacing: -0.03em;
 }
 
-.overlay-head .tag { text-decoration: none; }
-.overlay-head .tag:hover { color: var(--pink); }
+.overlay-actions { display: flex; gap: 6px; }
 
 .overlay-sub {
-  margin-top: 30px;
+  margin-top: 20px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--rule);
 }
@@ -173,10 +214,10 @@ body.has-overlay { overflow-y: auto; }
 /* One event row: title | poster | details */
 .event {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px 12px;
+  grid-template-columns: 1fr clamp(200px, 22vw, 380px) 1fr;
+  gap: 10px 14px;
   align-items: start;
-  padding: 8px 0 26px;
+  padding: 10px 0 22px;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -184,7 +225,7 @@ body.has-overlay { overflow-y: auto; }
   background: var(--accent);
   color: var(--accent-text);
   font-weight: 600;
-  font-size: clamp(36px, 3.9vw, 90px);
+  font-size: clamp(34px, 4.6vw, 96px);
   line-height: 0.95;
   letter-spacing: -0.065em;
   padding: 0.04em 0.03em 0.08em;
@@ -199,7 +240,7 @@ body.has-overlay { overflow-y: auto; }
 
 .event-venue {
   color: var(--panel-text);
-  font-size: clamp(18px, 1.2vw, 26px);
+  font-size: clamp(18px, 1.3vw, 26px);
   letter-spacing: -0.04em;
   line-height: 1.1;
 }
@@ -209,7 +250,7 @@ body.has-overlay { overflow-y: auto; }
   background: var(--date-bg);
   color: #222;
   font-weight: 500;
-  font-size: clamp(13px, 0.8vw, 16px);
+  font-size: clamp(13px, 0.85vw, 16px);
   line-height: 1.3;
   padding: 0 2px;
 }
@@ -217,24 +258,22 @@ body.has-overlay { overflow-y: auto; }
 .overlay-foot {
   display: flex;
   justify-content: center;
-  padding-top: 26px;
+  padding-top: 22px;
 }
 
 .overlay-foot .ou { width: 46px; color: var(--panel-text); }
 .overlay-foot .ou text { fill: currentColor; }
 
-/* Phones */
+/* ---------- Phones ---------- */
 @media (max-width: 700px) {
-  .intro { max-width: none; padding-right: 0; }
-  .menu {
-    position: static;
-    margin-top: 24px;
-  }
-  .overlay {
-    width: auto;
-    margin: 60vh 8px 8px;
-    padding: 14px 12px;
-  }
-  .event { grid-template-columns: 1fr; padding-bottom: 20px; }
+  :root { --split: 52vh; }
+  .intro { max-width: calc(100% - 170px - var(--edge)); font-size: 14px; }
+  .menu { gap: 8px; font-size: 14px; }
+  .overlay { padding: 12px; }
+  .event { grid-template-columns: 1fr; }
   .event-title { font-size: 13vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay { animation: none; }
 }

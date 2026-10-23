@@ -10,7 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="home">
+<body>
+  <canvas class="ascii" aria-hidden="true"></canvas>
+  <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
   <main>
     <p class="intro">
       Mostly Cloudy is a San Francisco-based creative house whose scope expands across
@@ -19,30 +21,19 @@
       Cloudy builds spaces where sounds, ideas, culture and art intersect.
     </p>
 
-    <nav class="menu">
-      <a href="events.html"><span>#/ Events</span></a>
-      <a href="archive.html"><span>=* Archive</span></a>
-      <a href="artists.html"><span>.+ Artists</span></a>
-      <a href="shop.html"><span>--. Shop</span></a>
-      <div class="menu-item">
-        <span class="menu-label">%~ Music</span>
-        <small class="tag">Coming Soon</small>
-      </div>
+    <nav class="menu" aria-label="Main">
+      <span class="soon" aria-label="Music, coming soon">MUSIC</span>
+      <a href="shop.html">SHOP</a>
+      <a href="artists.html">ARTISTS</a>
+      <a href="archive.html">ARCHIVE</a>
+      <a href="events.html">EVENTS</a>
     </nav>
 
     <ul class="contact">
-      <li>
-        <a href="mailto:talent@mostlycloudy.live">talent@mostlycloudy.live</a>
-        <small class="tag">for artist inquiries</small>
-      </li>
-      <li>
-        <a href="mailto:hello@mostlycloudy.live">hello@mostlycloudy.live</a>
-        <small class="tag">for other inquiries</small>
-      </li>
+      <li><a class="tag" href="mailto:talent@mostlycloudy.live">artist inquiries &nbsp;→</a></li>
+      <li><a class="tag" href="mailto:hello@mostlycloudy.live">other inquiries &nbsp;→</a></li>
     </ul>
   </main>
-
-  <img class="bouncer" src="assets/logo.png" alt="Mostly Cloudy" aria-hidden="true">
 
   <script src="script.js"></script>
 </body>
