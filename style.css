@@ -74,7 +74,7 @@ main > * { pointer-events: auto; } /* ...except on the text and links */
   right: var(--edge);
   display: flex;
   align-items: flex-start;
-  gap: clamp(10px, 1.3vw, 22px);
+  gap: clamp(4px, 0.45vw, 8px);
   font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
   font-weight: 700;
   font-size: clamp(13px, 1.05vw, 18px);
@@ -106,8 +106,8 @@ main > * { pointer-events: auto; } /* ...except on the text and links */
 .menu .soon::after {
   content: "coming soon";
   position: absolute;
-  top: 0;
-  right: calc(100% + 6px);
+  top: calc(100% + 4px);
+  right: 0;
   writing-mode: horizontal-tb;
   white-space: nowrap;
   font-family: "Inter Tight", Arial, sans-serif;
@@ -122,7 +122,10 @@ main > * { pointer-events: auto; } /* ...except on the text and links */
   transition: opacity 0.15s;
 }
 
-.menu .soon:hover::after { opacity: 1; }
+.menu .soon:hover::after,
+.menu .soon:focus::after { opacity: 1; }
+
+.menu .soon:focus { outline: none; }
 
 /* Inquiries, bottom left */
 .contact {
@@ -133,7 +136,7 @@ main > * { pointer-events: auto; } /* ...except on the text and links */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(8px, 0.9vw, 14px);
+  gap: clamp(3px, 0.3vw, 5px);
 }
 
 /* Small white labels ("artist inquiries →", "coming up...") */
