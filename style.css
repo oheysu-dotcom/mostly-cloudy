@@ -6,9 +6,9 @@
   --tag-bg: #ffffff;
   --tag-text: #9f9f9f;
 
-  --edge: clamp(14px, 2.1vw, 32px);   /* outer margin around everything */
+  --edge: clamp(7px, 1.05vw, 16px);   /* outer margin around everything */
   --split: 64vh;                      /* where the bottom strip starts */
-  --gap: clamp(12px, 1.4vw, 22px);    /* space between overlay and bottom strip */
+  --gap: clamp(6px, 0.7vw, 11px);     /* space between overlay and bottom strip */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +38,7 @@ body {
   top: 0;
   left: 0;
   z-index: 1;
-  width: clamp(150px, 17vw, 360px);
+  width: clamp(120px, 13.6vw, 288px);
   height: auto;
   pointer-events: none;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.45));
