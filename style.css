@@ -1,0 +1,128 @@
+:root {
+  --gray: #bfbfbf;
+  --text: #ffffff;
+  --pink: #ff0a7c;
+  --menu-bg: #a9ba8c;
+  --tag-bg: #f0f0f0;
+  --tag-text: #8c8c8c;
+  --gutter: clamp(12px, 0.75vw, 16px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  /* Placeholder until the real background image/video is added */
+  background: var(--gray) radial-gradient(ellipse at 65% 70%, #c9c6c4 0%, var(--gray) 60%) fixed;
+  color: var(--text);
+  font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  overflow: hidden;
+}
+
+main {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  height: 100dvh;
+  padding: var(--gutter);
+}
+
+/* Intro paragraph, top left */
+.intro {
+  max-width: max(32vw, 420px);
+  font-size: clamp(16px, 1.2vw, 26px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+/* Menu, top right */
+.menu {
+  position: absolute;
+  top: calc(var(--gutter) + 12px);
+  right: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(8px, 1vw, 20px);
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 1.5vw, 32px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.menu a,
+.menu-label {
+  color: var(--pink);
+  text-decoration: none;
+  background: var(--menu-bg);
+  padding: 0 0.05em;
+}
+
+.menu a:hover { background: var(--pink); color: var(--menu-bg); }
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Small gray labels ("Coming Soon", "for artist inquiries") */
+.tag {
+  display: inline-block;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-family: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+  font-size: clamp(12px, 0.75vw, 15px);
+  line-height: 1.15;
+  letter-spacing: 0;
+  padding: 0 1px;
+}
+
+/* Emails, bottom left */
+.contact {
+  position: absolute;
+  left: var(--gutter);
+  bottom: calc(var(--gutter) + 12px);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2vw, 40px);
+}
+
+.contact li { display: flex; flex-direction: column; align-items: flex-start; }
+
+.contact a {
+  color: var(--pink);
+  font-size: clamp(16px, 1.2vw, 26px);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact a:hover { color: var(--text); }
+
+/* Bouncing DVD-style logo */
+.bouncer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: clamp(160px, 17vw, 380px);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 14px rgba(255, 255, 255, 0.6));
+  will-change: transform;
+}
+
+/* Phones */
+@media (max-width: 700px) {
+  .intro { max-width: none; padding-right: 0; }
+  .menu {
+    position: static;
+    margin-top: 24px;
+  }
+}
