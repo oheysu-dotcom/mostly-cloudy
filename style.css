@@ -286,14 +286,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   min-height: 0;
 }
 
-.overlay-foot {
-  display: flex;
-  justify-content: center;
-  padding: var(--s-5) 0 var(--pad);
-}
-
-.ou { width: 44px; filter: invert(1); opacity: 0.85; }
-
 /* Horizontal track: shared by Events and Archive strips
    -------------------------------------------------------------------------- */
 
@@ -374,12 +366,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   letter-spacing: -0.025em;
 }
 
-.track-end {
-  display: flex;
-  align-items: flex-end;
-  padding: 0 var(--s-5);
-}
-
 /* --------------------------------------------------------------------------
    Archive — an index of shows; each opens into a filmstrip of photos
    -------------------------------------------------------------------------- */
@@ -387,7 +373,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 .shows {
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--pad);
+  padding: 0 var(--pad) var(--pad);
   scroll-padding-top: var(--s-3);
 }
 
@@ -496,8 +482,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 .roster-name:hover { color: var(--pink); }
 .roster-name[aria-selected="true"] { color: var(--pink); }
 
-.roster-end { margin-top: var(--s-5); }
-
 .artist {
   grid-column: 4 / -1;
   display: grid;
@@ -581,7 +565,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .roster { display: block; }
   .roster-list { position: static; flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
   .roster-name { font-size: var(--fs-md); }
-  .roster-end { display: none; }
   .artist { grid-template-columns: 1fr; }
   .artist-photo, .artist-text { grid-column: 1 / -1; }
   .artist-photo { max-height: none; }

@@ -356,9 +356,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
   // Horizontal tracks: arrow buttons, a counter, and arrow keys
   function setupTrack(track) {
-    var items = Array.prototype.filter.call(track.children, function (el) {
-      return !el.classList.contains("track-end");
-    });
+    var items = Array.prototype.slice.call(track.children);
     var nav = track.parentNode.querySelector("[data-nav]");
     if (!items.length) return;
 
