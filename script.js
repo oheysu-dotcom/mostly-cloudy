@@ -347,36 +347,181 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   else logo.addEventListener("load", start);
 })();
 
-// ---------- Archive galleries ----------
-// Puts each photo into whichever column is currently shortest, so the
-// columns end up close to the same height (like Cargo's columnized gallery).
+// ---------- Panels ----------
+// Horizontal tracks (Events, Archive photo strips), the Artists roster, and
+// moving between pages without reloading, so the background and the
+// bouncing logo carry on uninterrupted.
 (function () {
-  var galleries = document.querySelectorAll(".gallery");
+  var smooth = reduceMotion ? "auto" : "smooth";
 
-  function layout(gallery) {
-    var imgs = gallery._imgs || (gallery._imgs = Array.prototype.slice.call(gallery.querySelectorAll("img")));
-    var count = parseInt(getComputedStyle(gallery).getPropertyValue("--cols"), 10) || 3;
-    if (window.innerWidth <= 700) count = 2;
-    if (gallery._count === count) return;
-    gallery._count = count;
+  // Horizontal tracks: arrow buttons, a counter, and arrow keys
+  function setupTrack(track) {
+    var items = Array.prototype.filter.call(track.children, function (el) {
+      return !el.classList.contains("track-end");
+    });
+    var nav = track.parentNode.querySelector("[data-nav]");
+    if (!items.length) return;
 
-    gallery.innerHTML = "";
-    var cols = [], heights = [];
-    for (var i = 0; i < count; i++) {
-      var col = document.createElement("div");
-      col.className = "gallery-col";
-      gallery.appendChild(col);
-      cols.push(col);
-      heights.push(0);
+    // Where the track has to scroll to for item i to line up at the start
+    function pos(i) {
+      var pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+      return items[i].offsetLeft - track.offsetLeft - pad;
     }
-    imgs.forEach(function (img) {
-      var shortest = heights.indexOf(Math.min.apply(null, heights));
-      cols[shortest].appendChild(img);
-      heights[shortest] += img.getAttribute("height") / img.getAttribute("width");
+
+    function current() {
+      var idx = 0;
+      items.forEach(function (el, i) { if (pos(i) <= track.scrollLeft + 2) idx = i; });
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 2) idx = items.length - 1;
+      return idx;
+    }
+
+    function go(i) {
+      i = Math.max(0, Math.min(items.length - 1, i));
+      track.scrollTo({ left: pos(i), behavior: smooth });
+    }
+
+    function update() {
+      if (!nav) return;
+      nav.hidden = track.scrollWidth <= track.clientWidth + 2;
+      // Count the items fully in view, e.g. "01–03 / 05"
+      var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+      var seen = items.map(function (el) { return el.offsetLeft - track.offsetLeft; }).reduce(function (acc, left, i) {
+        var right = left + items[i].offsetWidth;
+        if (left >= track.scrollLeft - 2 && right <= track.scrollLeft + track.clientWidth + 2) acc.push(i + 1);
+        return acc;
+      }, []);
+      if (!seen.length) seen = [current() + 1];
+      var first = seen[0], last = seen[seen.length - 1];
+      nav.querySelector("[data-count]").textContent = pad(first) + (last > first ? "–" + pad(last) : "") + " / " + pad(items.length);
+      nav.querySelector("[data-prev]").disabled = track.scrollLeft <= 2;
+      nav.querySelector("[data-next]").disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    }
+
+    if (nav) {
+      nav.querySelector("[data-prev]").addEventListener("click", function () { go(current() - 1); });
+      nav.querySelector("[data-next]").addEventListener("click", function () { go(current() + 1); });
+    }
+    track.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); go(current() + 1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); go(current() - 1); }
+    });
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    track.querySelectorAll("img").forEach(function (img) { if (!img.complete) img.addEventListener("load", update); });
+    var details = track.closest("details");
+    if (details) details.addEventListener("toggle", update);
+    update();
+  }
+
+  // Artists: show one artist at a time
+  function setupRoster(roster) {
+    var tabs = roster.querySelectorAll('[role="tab"]');
+    roster.classList.add("is-tabbed");
+
+    function select(tab, focus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+      if (focus) tab.focus();
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function (e) { e.preventDefault(); select(tab); });
+      tab.addEventListener("keydown", function (e) {
+        var next = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        if (next) { e.preventDefault(); select(tabs[(i + next + tabs.length) % tabs.length], true); }
+      });
+    });
+    select(roster.querySelector('[aria-selected="true"]') || tabs[0]);
+  }
+
+  function setup(scope) {
+    scope.querySelectorAll("[data-track]").forEach(setupTrack);
+    scope.querySelectorAll(".roster").forEach(setupRoster);
+  }
+
+  // On phones the panel stops just above the menu, so it needs the menu's size
+  var menu = document.querySelector(".menu");
+  function measureMenu() {
+    if (!menu) return;
+    document.documentElement.style.setProperty("--menu-h", menu.offsetHeight + "px");
+    document.documentElement.style.setProperty("--menu-w", menu.offsetWidth + "px");
+  }
+  window.addEventListener("resize", measureMenu);
+  if (document.fonts) document.fonts.ready.then(measureMenu);
+  measureMenu();
+
+  // ----- moving between pages without a reload -----
+  var PAGES = /(^|\/)(index|events|archive|artists)\.html$/;
+
+  function swapTo(url, push) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.text();
+    }).then(function (text) {
+      var doc = new DOMParser().parseFromString(text, "text/html");
+      var oldPanel = document.querySelector(".overlay");
+      var oldCatcher = document.querySelector(".overlay-close");
+      var newPanel = doc.querySelector(".overlay");
+      var newCatcher = doc.querySelector(".overlay-close");
+
+      function place() {
+        if (oldPanel) oldPanel.remove();
+        if (oldCatcher) oldCatcher.remove();
+        var main = document.querySelector("main");
+        if (newCatcher) document.body.insertBefore(document.importNode(newCatcher, true), main);
+        if (newPanel) {
+          var panel = document.importNode(newPanel, true);
+          document.body.insertBefore(panel, main);
+          setup(panel);
+          var heading = panel.querySelector("h1");
+          if (heading) heading.focus({ preventScroll: true });
+        }
+        document.body.classList.toggle("has-overlay", !!newPanel);
+        document.title = doc.title;
+        var current = doc.querySelector(".menu [aria-current]");
+        document.querySelectorAll(".menu a").forEach(function (a) {
+          if (current && a.getAttribute("href") === current.getAttribute("href")) a.setAttribute("aria-current", "page");
+          else a.removeAttribute("aria-current");
+        });
+        if (push) history.pushState({}, "", url);
+        measureMenu();
+      }
+
+      // Let the old panel fade out first when closing
+      if (oldPanel && !newPanel && !reduceMotion) {
+        oldPanel.classList.add("is-leaving");
+        setTimeout(place, 140);
+      } else {
+        place();
+      }
     });
   }
 
-  function layoutAll() { Array.prototype.forEach.call(galleries, layout); }
-  window.addEventListener("resize", layoutAll);
-  layoutAll();
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a[href]");
+    if (e.defaultPrevented || !a || a.target || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (a.getAttribute("href").charAt(0) === "#") return;
+    var url = new URL(a.getAttribute("href"), location.href);
+    if (url.origin !== location.origin || !PAGES.test(url.pathname)) return;
+    e.preventDefault();
+    if (url.href === location.href && document.querySelector(".overlay")) return;
+    swapTo(url.href, true).catch(function () { location.href = url.href; });
+  });
+
+  window.addEventListener("popstate", function () {
+    swapTo(location.href, false).catch(function () { location.reload(); });
+  });
+
+  // Escape closes an open panel
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    var close = document.querySelector("[data-close]");
+    if (close) close.click();
+  });
+
+  setup(document);
 })();

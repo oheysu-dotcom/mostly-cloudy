@@ -7,54 +7,60 @@
   <meta name="description" content="Upcoming Mostly Cloudy events in San Francisco.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="has-overlay">
   <canvas class="backdrop" aria-hidden="true"></canvas>
   <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
 
   <!-- Clicking anywhere outside the panel goes back to the home page -->
-  <a class="overlay-close" href="index.html" aria-label="Close"></a>
+  <a class="overlay-close" href="index.html" tabindex="-1" aria-hidden="true"></a>
 
-  <section class="overlay">
+  <section class="overlay overlay--events" aria-labelledby="overlay-title">
     <header class="overlay-head">
-      <h1>Events</h1>
+      <h1 id="overlay-title" tabindex="-1">Events</h1>
+      <span class="label">coming up...</span>
       <div class="overlay-actions">
-        <a class="tag" href="#">More events ↗</a>
-        <a class="tag" href="index.html" aria-label="Close">close ×</a>
+        <div class="track-nav" data-nav hidden>
+          <button class="label" type="button" data-prev aria-label="Previous">←</button>
+          <span class="label" data-count aria-live="polite"></span>
+          <button class="label" type="button" data-next aria-label="Next">→</button>
+        </div>
+        <a class="label" href="#">More events ↗</a>
+        <a class="label" href="index.html" data-close>close ×</a>
       </div>
     </header>
-
-    <p class="overlay-sub"><small class="tag">coming up...</small></p>
 
     <!--
       To add an event: copy one <article> block below, paste it, and change the text,
       image and colors. "--accent" is the title box color, "--accent-text" its text color.
     -->
+    <div class="track events" data-track tabindex="0" aria-label="Upcoming events">
 
-    <article class="event" style="--accent: #9a7466; --accent-text: #ffffff;">
-      <h2 class="event-title">EQ [ live ]</h2>
-      <img class="event-poster" width="800" height="1000" src="assets/events/eq-live.jpg" alt="EQ live poster">
-      <div class="event-info">
-        <p class="event-venue">@The Great Northern</p>
-        <p class="event-when">Fri 11/6/26<br>10p-3a</p>
-      </div>
-    </article>
+      <article class="event" style="--accent: #9a7466; --accent-text: #ffffff;">
+        <h2 class="event-title">EQ [ live ]</h2>
+        <img loading="lazy" class="event-poster" width="800" height="1000" src="assets/events/eq-live.jpg" alt="EQ live poster">
+        <div class="event-info">
+          <p class="event-venue">@The Great Northern</p>
+          <p class="label label--blue">Fri 11/6/26<br>10p-3a</p>
+        </div>
+      </article>
 
-    <article class="event" style="--accent: #827f81; --accent-text: #d4d4d4;">
-      <h2 class="event-title">Regal+10010</h2>
-      <img class="event-poster" width="800" height="1000" src="assets/events/regal-10010.jpg" alt="Regal86 + 10010 poster">
-      <div class="event-info">
-        <p class="event-venue">@Monarch</p>
-        <p class="event-when">Sat 11/14/26<br>9p-3a</p>
-      </div>
-    </article>
+      <article class="event" style="--accent: #827f81; --accent-text: #d4d4d4;">
+        <h2 class="event-title">Regal+10010</h2>
+        <img loading="lazy" class="event-poster" width="800" height="1000" src="assets/events/regal-10010.jpg" alt="Regal86 + 10010 poster">
+        <div class="event-info">
+          <p class="event-venue">@Monarch</p>
+          <p class="label label--blue">Sat 11/14/26<br>9p-3a</p>
+        </div>
+      </article>
 
-    <footer class="overlay-foot">
-      <img class="ou" src="assets/ou.png" alt="">
-    </footer>
+      <div class="track-end"><img class="ou" src="assets/ou.png" alt=""></div>
+    </div>
+
   </section>
+
   <main>
     <p class="intro">
       Mostly Cloudy is a San Francisco-based creative house whose scope expands across
@@ -72,8 +78,8 @@
     </nav>
 
     <ul class="contact">
-      <li><a class="tag" href="mailto:talent@mostlycloudy.live">artist inquiries &nbsp;→</a></li>
-      <li><a class="tag" href="mailto:hello@mostlycloudy.live">other inquiries &nbsp;→</a></li>
+      <li><a class="label" href="mailto:talent@mostlycloudy.live">artist inquiries &nbsp;→</a></li>
+      <li><a class="label" href="mailto:hello@mostlycloudy.live">other inquiries &nbsp;→</a></li>
     </ul>
   </main>
 
