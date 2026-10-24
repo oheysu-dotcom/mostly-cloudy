@@ -10,7 +10,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
 
-  var PAPER = "#b4b4b4";
+  var PAPER = "#a8a8a8";
   var CELL = 15;                   // grid spacing in px
   var FOCUS_SCALE = 16;            // the focus trail is stored at 1/16 size
   var COLOR_SPEED = 0.12;          // how fast the colors shift
@@ -82,8 +82,8 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     // Slightly warmer tone where the grid is
     var g = p.createLinearGradient(0, 0, paper.width, 0);
-    g.addColorStop(0, "rgba(180, 170, 168, 0)");
-    g.addColorStop(1, "rgba(180, 170, 168, 0.9)");
+    g.addColorStop(0, "rgba(169, 159, 157, 0)");
+    g.addColorStop(1, "rgba(169, 159, 157, 0.9)");
     p.fillStyle = g;
     p.fillRect(0, 0, paper.width, paper.height);
 
@@ -258,7 +258,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ctx.drawImage(layer, 0, 0);
 
     // Soft gray wash over everything so the colors stay muted
-    ctx.fillStyle = "rgba(182, 178, 176, 0.22)";
+    ctx.fillStyle = "rgba(170, 166, 164, 0.22)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
