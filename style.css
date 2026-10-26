@@ -461,23 +461,24 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 }
 
 /* --------------------------------------------------------------------------
-   Artists — roster on the left, one artist at a time on the right
+   Artists — the same spread as Events, so the two pages rhyme:
+   roster | photo | bio. Everything hangs from one top line and lands on one
+   bottom line (the photo's edges); the bio is set larger, as a lead.
    -------------------------------------------------------------------------- */
 
 .roster {
+  --content-h: max(220px, calc(100cqh - 2 * var(--pad) - 4.25rem));
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--gutter);
+  grid-template-columns: minmax(10rem, 2fr) auto minmax(16rem, 5fr);
+  column-gap: var(--s-6);
+  align-items: start;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--s-4) var(--pad) var(--pad);
-  align-items: start;
+  padding: var(--pad);
 }
 
 .roster-list {
-  grid-column: 1 / 4;
-  position: sticky;
-  top: 0;
+  grid-column: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -491,11 +492,13 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   color: var(--panel-text);
   font-size: var(--fs-md);
   font-weight: 600;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
+  line-height: 1;
+  letter-spacing: -0.03em;
   text-decoration: none;
   transition: color var(--t-fast);
 }
+
+.roster-name:first-child { margin-top: -0.1em; }   /* optical: caps meet the photo's top edge */
 
 .roster-no {
   font-size: var(--fs-xs);
@@ -505,51 +508,52 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   font-variant-numeric: tabular-nums;
 }
 
-.roster-name:hover { color: var(--pink); }
+.roster-name:hover,
 .roster-name[aria-selected="true"] { color: var(--pink); }
 
+/* Each artist fills the photo + bio columns */
 .artist {
-  grid-column: 4 / -1;
+  grid-column: 2 / -1;
+  grid-row: 1;
   min-width: 0;
   display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: var(--gutter);
-  align-items: start;
+  grid-template-columns: subgrid;
+  column-gap: var(--s-6);
 }
 
 .artist[hidden] { display: none; }
 
 .artist:not([hidden]) { animation: reveal var(--t-med) var(--ease) both; }
 
-/* With the script off, every artist is listed; keep them apart */
-.artist + .artist { margin-top: var(--s-6); }
-.roster.is-tabbed .artist + .artist { margin-top: 0; }
+/* With the script off, every artist is listed one after another */
+.roster:not(.is-tabbed) .artist { grid-row: auto; margin-bottom: var(--s-6); }
 
-/* The photo is never cropped: it scales down, keeping its shape, until it
-   fits both its columns and the panel's height */
+/* The photo sets the height of the spread and is never cropped
+   (the photos are square, so their width equals their height) */
 .artist-photo {
-  grid-column: 1 / 4;
-  width: auto;
+  width: min(var(--content-h), 34cqw);
   height: auto;
-  max-width: 100%;
-  max-height: calc(100cqh - 9rem);
 }
 
+/* Stretches to the photo's height, so the link lands on its bottom edge */
 .artist-text {
-  grid-column: 4 / -1;
-  padding-left: var(--s-5);
   min-width: 0;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;     /* bio hangs from the top, mix link sits on the bottom line */
   align-items: flex-start;
-  gap: var(--s-4);
-  max-width: 46ch;
+  gap: var(--s-5);
 }
 
-.artist-name { font-size: var(--fs-lg); line-height: 1.05; letter-spacing: -0.035em; }
-.artist-name .label { font-size: inherit; letter-spacing: inherit; padding: 0 0.12em 0.04em; }
-
-.artist-bio { color: var(--panel-muted); font-size: var(--fs-sm); line-height: 1.4; }
+.artist-bio {
+  max-width: 44ch;
+  margin-top: -0.28em;               /* optical: first line's caps meet the photo's top edge */
+  color: var(--panel-text);
+  font-size: clamp(13px, min(1.35vw, 3.6cqh), 21px);
+  line-height: 1.32;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+}
 
 /* --------------------------------------------------------------------------
    Tablet
@@ -559,11 +563,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .show-title  { grid-column: 2 / 7; }
   .show-date   { grid-column: 7 / 9; }
   .show-lineup { grid-column: 9 / 12; }
-  .roster-list { grid-column: 1 / 4; }
-  .artist { grid-column: 4 / -1; }
-  .artist-photo { grid-column: 1 / 5; }
-  .artist-text { grid-column: 5 / -1; }
-  .roster-list, .artist { min-width: 0; }
 }
 
 /* --------------------------------------------------------------------------
@@ -599,11 +598,11 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .strip img { flex: none; height: var(--strip-h); width: auto; }
 
   .roster { display: block; }
-  .roster-list { position: static; flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
-  .roster-name { font-size: var(--fs-md); }
-  .artist { grid-template-columns: 1fr; }
-  .artist-photo, .artist-text { grid-column: 1 / -1; }
-  .artist-photo { max-height: 60cqh; }
+  .roster-list { flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
+  .roster-name:first-child { margin-top: 0; }
+  .artist { display: flex; flex-direction: column; gap: var(--s-4); }
+  .artist-photo { width: 100%; height: auto; max-width: none; }
+  .artist-bio { margin-top: 0; font-size: var(--fs-sm); }
 }
 
 /* Very short windows: give the panel more of the screen */
