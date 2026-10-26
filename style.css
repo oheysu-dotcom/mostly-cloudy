@@ -96,7 +96,6 @@ a.label:hover, button.label:hover { color: var(--pink); }
 
 .label--blue  { background: var(--blue);  color: var(--ink); white-space: normal; }
 .label--pink  { background: var(--pink);  color: #fff; font-weight: 600; white-space: normal; }
-.label--green { background: var(--green); color: var(--pink); font-weight: 600; }
 
 /* --------------------------------------------------------------------------
    Background: canvas + bouncing logo
