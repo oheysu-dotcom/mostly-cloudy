@@ -510,6 +510,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 
 .artist {
   grid-column: 4 / -1;
+  min-width: 0;
   display: grid;
   grid-template-columns: repeat(9, minmax(0, 1fr));
   gap: var(--gutter);
@@ -524,16 +525,20 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 .artist + .artist { margin-top: var(--s-6); }
 .roster.is-tabbed .artist + .artist { margin-top: 0; }
 
+/* The photo is never cropped: it scales down, keeping its shape, until it
+   fits both its columns and the panel's height */
 .artist-photo {
-  grid-column: 1 / 5;
-  width: 100%;
-  max-height: calc(100cqh - 7rem);
-  aspect-ratio: 1;
-  object-fit: cover;
+  grid-column: 1 / 4;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100cqh - 9rem);
 }
 
 .artist-text {
-  grid-column: 5 / -1;
+  grid-column: 4 / -1;
+  padding-left: var(--s-5);
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -558,6 +563,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .artist { grid-column: 4 / -1; }
   .artist-photo { grid-column: 1 / 5; }
   .artist-text { grid-column: 5 / -1; }
+  .roster-list, .artist { min-width: 0; }
 }
 
 /* --------------------------------------------------------------------------
@@ -597,7 +603,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .roster-name { font-size: var(--fs-md); }
   .artist { grid-template-columns: 1fr; }
   .artist-photo, .artist-text { grid-column: 1 / -1; }
-  .artist-photo { max-height: none; }
+  .artist-photo { max-height: 60cqh; }
 }
 
 /* Very short windows: give the panel more of the screen */
