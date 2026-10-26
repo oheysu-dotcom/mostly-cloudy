@@ -311,49 +311,71 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 .track-nav button:disabled { opacity: 0.4; cursor: default; }
 
 /* --------------------------------------------------------------------------
-   Events — a horizontal run of posters, each sized to fit the panel height
+   Events — two to a view. Each event is a small spread: the poster on the
+   left; the title hangs from the top of the text column and the details
+   sit on the poster's baseline, so the space between them is deliberate.
    -------------------------------------------------------------------------- */
 
 .events {
-  --title-fs: min(var(--fs-xl), 13cqh);   /* titles shrink on short windows */
-  --poster-h: clamp(150px, calc(100cqh - 2 * var(--pad) - 3.4rem - var(--title-fs) - var(--s-4)), 680px);
-  padding: var(--s-4) var(--pad) var(--pad);
+  --poster-h: clamp(160px, calc(100cqh - 2 * var(--pad) - 3.4rem), 640px);
+  padding: var(--pad);
   scroll-padding-inline: var(--pad);
-  align-items: stretch;
+  gap: calc(2 * var(--gutter));
+  align-items: start;
 }
 
 .event {
-  container-type: inline-size;
-  width: calc(var(--poster-h) * 0.8 + var(--gutter) + clamp(150px, 15vw, 260px));
+  position: relative;
+  flex: 0 0 calc(50% - var(--gutter));
   display: grid;
-  grid-template-columns: calc(var(--poster-h) * 0.8) 1fr;
-  grid-template-rows: auto 1fr;
-  gap: var(--s-3) var(--gutter);
-  align-content: start;
+  /* the poster never takes more than 55% of the event, so the title keeps room */
+  grid-template-columns: minmax(0, min(calc(var(--poster-h) * 0.8), 55%)) minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  gap: var(--s-4) var(--gutter);
 }
 
-.event + .event { padding-left: var(--gutter); border-left: 1px solid var(--rule); }
-
-.event-title {
-  grid-column: 1 / -1;
-  background: var(--accent);
-  color: var(--accent-text);
-  font-size: min(var(--title-fs), 15.5cqi);
-  font-weight: 600;
-  line-height: 0.92;
-  letter-spacing: -0.06em;
-  padding: 0.05em 0.06em 0.1em 0.03em;
-  white-space: nowrap;
+/* hairline between events, centered in the gap */
+.event + .event::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--gutter));
+  border-left: 1px solid var(--rule);
 }
 
 .event-poster {
+  grid-row: 1 / -1;
   width: 100%;
-  height: var(--poster-h);
-  object-fit: cover;
+  max-height: var(--poster-h);
   aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+/* The title column is its own container, so long titles scale to fit it */
+.event-title {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  container-type: inline-size;
+  display: flex;                    /* the highlight's top edge lines up with the poster's */
+  font-size: var(--fs-xl);
+  font-weight: 600;
+}
+
+/* The highlight hugs the words rather than filling the column */
+.event-title span {
+  font-size: min(1em, 17cqi);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  background: var(--accent);
+  color: var(--accent-text);
+  padding: 0.02em 0.1em 0.07em 0.04em;
 }
 
 .event-info {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -425,12 +447,16 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 }
 
 /* Every photo shares one height, so landscape and portrait sit on a common line */
-.strip { --strip-h: clamp(160px, calc(100cqh - 15rem), 560px); }
+/* Justified row: every photo shares one height and the row fills the full
+   width exactly. Each photo grows in proportion to its shape (--ar). */
+.strip { overflow-x: hidden; }
 
 .strip img {
-  height: var(--strip-h);
-  width: auto;
-  max-width: none;
+  flex: var(--ar, 1) 1 0;
+  width: 0;
+  min-width: 0;
+  height: auto;
+  aspect-ratio: var(--ar, 1);
   object-fit: cover;
 }
 
@@ -550,9 +576,11 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 
   .overlay-head { flex-wrap: wrap; row-gap: var(--s-2); }
 
-  .events { --poster-h: clamp(150px, calc(100cqh - 2 * var(--pad) - 3.4rem - var(--title-fs) - 5rem), 460px); }
-  .event { width: min(84cqw, 340px); grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
-  .event-poster { width: min(100%, calc(var(--poster-h) * 0.8)); height: auto; }
+  .events { --poster-h: clamp(160px, calc(100cqh - 2 * var(--pad) - 3.4rem - 9rem), 440px); }
+  .event { flex-basis: 84%; grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+  .event-poster { grid-row: auto; width: min(100%, calc(var(--poster-h) * 0.8)); }
+  .event-title, .event-info { grid-column: 1; grid-row: auto; }
+  .event-title { font-size: clamp(36px, 11vw, 56px); }
 
   .show-row { grid-template-columns: 2rem 1fr auto; row-gap: var(--s-2); }
   .show-no { grid-column: 1; }
@@ -560,7 +588,9 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .show-toggle { grid-column: 3; grid-row: 1; }
   .show-date { grid-column: 2 / -1; }
   .show-lineup { grid-column: 2 / -1; }
-  .strip { --strip-h: clamp(180px, 52cqh, 420px); }
+  /* On phones the row would be too small, so it becomes a swipeable strip */
+  .strip { --strip-h: clamp(180px, 52cqh, 420px); overflow-x: auto; }
+  .strip img { flex: none; height: var(--strip-h); width: auto; }
 
   .roster { display: block; }
   .roster-list { position: static; flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }

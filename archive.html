@@ -29,11 +29,11 @@
     <!--
       To add a show: copy one <details> block, paste it at the top of the list,
       change the name, date and lineup, and list its photos inside the strip.
-      Only the first show has "open", so it starts expanded.
+      Each photo's "--ar" is its width divided by its height (1.5 landscape, 0.667 portrait).
     -->
     <div class="shows">
 
-      <details class="show" name="archive" open>
+      <details class="show" name="archive">
         <summary class="show-row">
           <span class="show-no">01</span>
           <h2 class="show-title"><span class="label label--pink">Keep Hush</span></h2>
@@ -43,10 +43,10 @@
         </summary>
         <div class="show-body">
           <div class="strip" data-track tabindex="0" aria-label="Keep Hush photos">
-            <img width="933" height="1400" src="assets/archive/p3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/x3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/d3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/c3150689.jpg" alt="Keep Hush" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/p3150689.jpg" alt="Keep Hush" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/x3150689.jpg" alt="Keep Hush" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/d3150689.jpg" alt="Keep Hush" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/c3150689.jpg" alt="Keep Hush" loading="lazy">
           </div>
           <div class="track-nav" data-nav hidden>
           <button class="label" type="button" data-prev aria-label="Previous">←</button>
@@ -66,11 +66,11 @@
         </summary>
         <div class="show-body">
           <div class="strip" data-track tabindex="0" aria-label="Arca’s ‘XXXXX’ Official Listening Party photos">
-            <img width="1400" height="934" src="assets/archive/r3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/j3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/l3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/q3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/o3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/r3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/j3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/l3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/q3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/o3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
           </div>
           <div class="track-nav" data-nav hidden>
           <button class="label" type="button" data-prev aria-label="Previous">←</button>
@@ -90,11 +90,11 @@
         </summary>
         <div class="show-body">
           <div class="strip" data-track tabindex="0" aria-label="San Francisco Pride 2026 photos">
-            <img width="933" height="1400" src="assets/archive/n3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/m3150682.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/c3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/t3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/e3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/n3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/m3150682.jpg" alt="San Francisco Pride 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/c3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/t3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/e3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
           </div>
           <div class="track-nav" data-nav hidden>
           <button class="label" type="button" data-prev aria-label="Previous">←</button>
@@ -114,10 +114,10 @@
         </summary>
         <div class="show-body">
           <div class="strip" data-track tabindex="0" aria-label="San Francisco Carnaval 2026 photos">
-            <img width="1400" height="934" src="assets/archive/i3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/j3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/w3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/p3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/i3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/j3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/w3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/p3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
           </div>
           <div class="track-nav" data-nav hidden>
           <button class="label" type="button" data-prev aria-label="Previous">←</button>
@@ -137,10 +137,10 @@
         </summary>
         <div class="show-body">
           <div class="strip" data-track tabindex="0" aria-label="New Year’s Eve 2025 photos">
-            <img width="933" height="1400" src="assets/archive/n3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img width="1400" height="934" src="assets/archive/h3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/v3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img width="933" height="1400" src="assets/archive/m3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/n3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
+            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/h3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/v3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
+            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/m3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
           </div>
           <div class="track-nav" data-nav hidden>
           <button class="label" type="button" data-prev aria-label="Previous">←</button>
