@@ -24,7 +24,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   ];
 
   var W, H, dpr;
-  var paper, fog, soft, haze, fogMask, softMask, sharp, cells, layer, focusA, focusB;
+  var paper, soft, haze, softMask, sharp, cells, layer, focusA, focusB;
 
   // ----- noise -----
   var perm = new Uint8Array(512);
@@ -192,9 +192,8 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     drawPaper();
     makeCells();
-    fogMask = mask(function (t) { return smooth(0.12, 0.45, t) * 0.55; });
-    softMask = mask(function (t) { return smooth(0.36, 0.58, t) * 0.9; });
-    fog = makeCanvas(Math.ceil(W / 12), Math.ceil(H / 12));
+    // One even blur everywhere; the mask only thins the grid out toward the left
+    softMask = mask(function (t) { return smooth(0.12, 0.58, t) * 0.9; });
     soft = makeCanvas(Math.ceil(W / 5), Math.ceil(H / 5));
     haze = makeCanvas(Math.ceil(W / 2), Math.ceil(H / 2));
     refresh(performance.now() / 1000);
@@ -264,17 +263,14 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
   function refresh(t) {
     updateSymbols(t);
-    updateBlur(fog, fogMask, 0.5);
     updateBlur(soft, softMask, 0.4);
 
-    // Combine both at half size with a real blur, so it reads soft instead of blocky
+    // Scale up at half size with a real blur, so it reads soft instead of blocky
     var h = haze.getContext("2d");
     h.clearRect(0, 0, haze.width, haze.height);
     h.imageSmoothingEnabled = true;
     h.imageSmoothingQuality = "high";
-    h.filter = "blur(4px)";
-    h.drawImage(fog, 0, 0, haze.width, haze.height);
-    h.filter = "blur(1.5px)";
+    h.filter = "blur(2px)";
     h.drawImage(soft, 0, 0, haze.width, haze.height);
     h.filter = "none";
   }
