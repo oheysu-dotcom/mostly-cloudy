@@ -434,6 +434,44 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
       });
     });
     select(roster.querySelector('[aria-selected="true"]') || tabs[0]);
+
+    // Scrolling (mouse wheel or trackpad) anywhere on the panel steps through
+    // the artists. One gesture moves one artist: after a switch we wait for
+    // the wheel to go quiet, so a trackpad's coasting doesn't skip ahead.
+    var panel = roster.closest(".overlay") || roster;
+    var pending = 0, locked = false, quiet;
+
+    function index() {
+      return Array.prototype.indexOf.call(tabs, roster.querySelector('[aria-selected="true"]'));
+    }
+
+    panel.addEventListener("wheel", function (e) {
+      if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;   // sideways scrolls are left alone
+      var dir = e.deltaY > 0 ? 1 : -1;
+
+      // If the artist's text is taller than the panel, scroll it first and
+      // only switch once it reaches the top or bottom
+      var canScroll = dir > 0
+        ? roster.scrollTop + roster.clientHeight < roster.scrollHeight - 1
+        : roster.scrollTop > 0;
+      if (canScroll && !locked) { pending = 0; return; }
+
+      var target = index() + dir;
+      if (target < 0 || target >= tabs.length) return;        // no wrap-around at the ends
+      e.preventDefault();
+
+      clearTimeout(quiet);
+      quiet = setTimeout(function () { locked = false; pending = 0; }, 220);
+      if (locked) return;
+
+      pending += e.deltaY;
+      if (Math.abs(pending) < 30) return;
+      locked = true;
+      pending = 0;
+      roster.dataset.dir = dir > 0 ? "down" : "up";
+      select(tabs[target]);
+      roster.scrollTop = 0;
+    }, { passive: false });
   }
 
   function setup(scope) {

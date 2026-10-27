@@ -524,6 +524,13 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 
 .artist:not([hidden]) { animation: reveal var(--t-med) var(--ease) both; }
 
+/* When scrolling between artists, the next one slides in from that direction */
+.roster[data-dir="down"] .artist:not([hidden]) { animation-name: from-below; }
+.roster[data-dir="up"] .artist:not([hidden]) { animation-name: from-above; }
+
+@keyframes from-below { from { opacity: 0; transform: translateY(var(--s-4)); } }
+@keyframes from-above { from { opacity: 0; transform: translateY(calc(-1 * var(--s-4))); } }
+
 /* With the script off, every artist is listed one after another */
 .roster:not(.is-tabbed) .artist { grid-row: auto; margin-bottom: var(--s-6); }
 
