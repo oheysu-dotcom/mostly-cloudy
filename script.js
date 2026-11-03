@@ -24,7 +24,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   ];
 
   var W, H, dpr;
-  var paper, soft, haze, softMask, sharp, cells, layer, focusA, focusB;
+  var paper, smoke, soft, haze, softMask, sharp, cells, layer, focusA, focusB;
 
   // ----- noise -----
   var perm = new Uint8Array(512);
@@ -87,18 +87,15 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     p.fillStyle = g;
     p.fillRect(0, 0, paper.width, paper.height);
 
-    // Water-stain lines + mottling, computed at 1/3 size and scaled up softly
+    // Paper mottling, computed at 1/3 size and scaled up softly
     var sw = Math.ceil(W / 3), sh = Math.ceil(H / 3);
     var small = makeCanvas(sw, sh), s = small.getContext("2d");
     var img = s.createImageData(sw, sh);
     for (var y = 0; y < sh; y++) {
       for (var x = 0; x < sw; x++) {
-        var n = fbm(x / 230 + 3.1, y / 230 + 7.7) * 1.7 + (noise(x / 6, y / 6) - 0.5) * 0.03;
-        var line = Math.abs(n - Math.round(n));                 // distance to a contour
-        var edge = Math.max(0, 1 - line / 0.018) * (1 - smooth(0.4, 0.75, x / sw));
         var mottle = (noise(x / 9, y / 9) - 0.5) * 10;
         var i = (y * sw + x) * 4;
-        var dark = edge * 22 - mottle;
+        var dark = -mottle;
         img.data[i] = img.data[i + 1] = img.data[i + 2] = dark > 0 ? 80 : 255;
         img.data[i + 3] = Math.min(255, Math.abs(dark) * 2.2);
       }
@@ -109,6 +106,60 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     p.drawImage(small, 0, 0, paper.width, paper.height);
     p.filter = "none";
     p.globalAlpha = 1;
+  }
+
+  // The smoke cloud: one big cumulus-shaped water stain across the screen,
+  // hazy and lighter inside, with a thin ragged darker tideline at its edge.
+  // Built from overlapping circles (positions are for a 1440x900 screen and
+  // scale to any size), then roughened with noise so the edge looks organic.
+  var CLOUD = [
+    // the billowing top edge, left to right
+    [70, 660, 130], [150, 470, 130], [270, 340, 125], [400, 240, 120],
+    [540, 170, 115], [680, 150, 105], [810, 130, 100], [940, 190, 105],
+    [1070, 240, 110], [1200, 270, 100], [1330, 330, 110], [1440, 470, 130],
+    // the body, filling everything below the bumps
+    [330, 700, 330], [720, 620, 420], [1120, 640, 360], [720, 1100, 600]
+  ];
+
+  function drawSmoke() {
+    var sw = Math.ceil(W / 2), sh = Math.ceil(H / 2);
+    var small = makeCanvas(sw, sh), s = small.getContext("2d");
+    var img = s.createImageData(sw, sh);
+    var sx = W / 1440, sy = H / 900, sr = Math.max(sx, sy);
+    var circles = CLOUD.map(function (c) { return [c[0] * sx / 2, c[1] * sy / 2, c[2] * sr / 2]; });
+    var k = 22;   // how softly neighbouring bumps blend into each other
+
+    for (var y = 0; y < sh; y++) {
+      for (var x = 0; x < sw; x++) {
+        // smooth union of the circles = signed distance to the cloud's edge
+        var d = 1e9;
+        for (var j = 0; j < circles.length; j++) {
+          var c = circles[j], dx = x - c[0], dy = y - c[1];
+          var dc = Math.sqrt(dx * dx + dy * dy) - c[2];
+          var h = Math.max(k - Math.abs(d - dc), 0) / k;
+          d = Math.min(d, dc) - h * h * k * 0.25;
+        }
+        d += (fbm(x / 28, y / 28) - 0.5) * 16 + (noise(x / 3, y / 3) - 0.5) * 2.5;
+
+        var i = (y * sw + x) * 4;
+        var line = Math.exp(-(d * d) / 0.6) * 0.42 + Math.exp(-((d + 5) * (d + 5)) / 3) * 0.08;
+        var haze = d < 0 ? smooth(0, 50, -d) * 0.14 : 0;
+        if (line > haze) {
+          img.data[i] = img.data[i + 1] = img.data[i + 2] = 72;
+          img.data[i + 3] = 255 * line;
+        } else {
+          img.data[i] = img.data[i + 1] = img.data[i + 2] = 238;
+          img.data[i + 3] = 255 * haze;
+        }
+      }
+    }
+    s.putImageData(img, 0, 0);
+    smoke = makeCanvas(canvas.width, canvas.height);
+    var o = smoke.getContext("2d");
+    o.imageSmoothingEnabled = true;
+    o.imageSmoothingQuality = "high";
+    o.filter = "blur(" + (0.6 * dpr) + "px)";
+    o.drawImage(small, 0, 0, smoke.width, smoke.height);
   }
 
   // Each grid cell keeps its shape, but its color shifts over time. The color
@@ -191,6 +242,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     canvas.height = Math.round(H * dpr);
 
     drawPaper();
+    drawSmoke();
     makeCells();
     // One even blur everywhere; the mask only thins the grid out toward the left
     softMask = mask(function (t) { return smooth(0.12, 0.58, t) * 0.9; });
@@ -245,6 +297,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(haze, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(smoke, 0, 0);
 
     // Sharp grid, shown only along the cursor trail
     var l = layer.getContext("2d");
@@ -470,9 +523,38 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     }, { passive: false });
   }
 
+  // Archive: count the days since the first show, and hide photos (crowd
+  // shots first, from the end of the list) that would run past the names
+  function setupArchive(archive) {
+    archive.querySelectorAll("[data-days-since]").forEach(function (el) {
+      var p = el.getAttribute("data-days-since").split("-");
+      var start = Date.UTC(+p[0], p[1] - 1, +p[2]);
+      var now = new Date(), today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+      el.textContent = Math.floor((today - start) / 864e5).toLocaleString("en-US");
+    });
+
+    var names = archive.querySelector(".archive-names");
+    var photos = archive.querySelector(".archive-photos");
+    if (!names || !photos) return;
+    var imgs = Array.prototype.slice.call(photos.querySelectorAll("img"));
+
+    function fit() {
+      imgs.forEach(function (img) { img.hidden = false; });
+      for (var i = imgs.length - 1; i >= 0; i--) {
+        if (photos.offsetHeight <= names.offsetHeight) break;
+        if (imgs[i].getAttribute("data-kind") === "solo") break;   // never drop the artists themselves
+        imgs[i].hidden = true;
+      }
+    }
+    window.addEventListener("resize", fit);
+    if (document.fonts) document.fonts.ready.then(fit);
+    fit();
+  }
+
   function setup(scope) {
     scope.querySelectorAll("[data-track]").forEach(setupTrack);
     scope.querySelectorAll(".roster").forEach(setupRoster);
+    scope.querySelectorAll(".archive").forEach(setupArchive);
   }
 
   // On phones the panel stops just above the menu, so it needs the menu's size

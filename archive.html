@@ -11,6 +11,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="has-overlay">
+  <!-- Grain texture for bold type (used by class="grain") -->
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" result="specks"
+        values="0 0 0 0 0.3
+                0 0 0 0 0.3
+                0 0 0 0 0.3
+                -2.4 0 0 0 0.92"/>
+      <feComposite in="specks" in2="SourceGraphic" operator="in" result="grainOnShape"/>
+      <feBlend in="grainOnShape" in2="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
   <canvas class="backdrop" aria-hidden="true"></canvas>
   <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
 
@@ -26,131 +39,124 @@
     </header>
 
     <!--
-      To add a show: copy one <details> block, paste it at the top of the list,
-      change the name, date and lineup, and list its photos inside the strip.
-      Each photo's "--ar" is its width divided by its height (1.5 landscape, 0.667 portrait).
+      The day count updates itself every day, counting from data-since.
+      To add an artist, add a line to the list (it stays alphabetical by hand).
+      Photos are listed in priority order: solo artist shots first, crowd shots last.
+      If the photos would run longer than the artist list, the last ones are hidden.
     -->
-    <div class="shows">
+    <div class="archive">
+      <p class="stat grain">
+        <em>81</em> artists and <em>35</em> shows over <em data-days-since="2024-01-23">1,015</em> days
+      </p>
 
-      <details class="show" name="archive">
-        <summary class="show-row">
-          <span class="show-no">01</span>
-          <h2 class="show-title"><span class="label label--pink">Keep Hush</span></h2>
-          <span class="show-date"><span class="label label--blue">08/15/2026</span></span>
-          <span class="show-lineup">Andyland, BAE BAE, felipe d., Femme Jatale, Julia Rose, Profesito</span>
-          <span class="show-toggle" aria-hidden="true"></span>
-        </summary>
-        <div class="show-body">
-          <div class="strip" data-track tabindex="0" aria-label="Keep Hush photos">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/p3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/x3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/d3150689.jpg" alt="Keep Hush" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/c3150689.jpg" alt="Keep Hush" loading="lazy">
-          </div>
-          <div class="track-nav" data-nav hidden>
-          <button class="label" type="button" data-prev aria-label="Previous">←</button>
-          <span class="label" data-count aria-live="polite"></span>
-          <button class="label" type="button" data-next aria-label="Next">→</button>
-        </div>
-        </div>
-      </details>
+      <ul class="archive-names grain" aria-label="All-time artists">
+        <li>1OO1O</li>
+        <li>1ycia</li>
+        <li>4dhila</li>
+        <li>Afakasi Papi</li>
+        <li>Akumen</li>
+        <li>Alírio</li>
+        <li>Amarji King</li>
+        <li>Andy Oro</li>
+        <li>Andyland</li>
+        <li>Asphodèle</li>
+        <li>Azúcar</li>
+        <li>BAE BAE</li>
+        <li>bad juuju</li>
+        <li>Baelüt</li>
+        <li>Bianca Oblivion</li>
+        <li>Byrell the Great</li>
+        <li>Cashu</li>
+        <li>Cm3rn</li>
+        <li>Coffintexts</li>
+        <li>Crystallmess</li>
+        <li>De Alma</li>
+        <li>Digital Kitkat</li>
+        <li>Dinamarca</li>
+        <li>Dina</li>
+        <li>Discnogirl</li>
+        <li>DJ Caro</li>
+        <li>DJ IWORI</li>
+        <li>DJ Juanny</li>
+        <li>DJ Saratonin</li>
+        <li>Doctor Jeep</li>
+        <li>EQ</li>
+        <li>Femme Jatale</li>
+        <li>felipe d.</li>
+        <li>Girls on Deck</li>
+        <li>Healing Hottie</li>
+        <li>Honeydips</li>
+        <li>J. Córdova</li>
+        <li>Julia Rose</li>
+        <li>Just Another Bitch</li>
+        <li>Katie</li>
+        <li>Kebra</li>
+        <li>Leonce</li>
+        <li>Liano</li>
+        <li>Lil Bebe Cyborg</li>
+        <li>Lil Zé</li>
+        <li>Linapary</li>
+        <li>Maliciel</li>
+        <li>Mango and Ginger</li>
+        <li>Martyn Bootyspoon</li>
+        <li>Milli Meng</li>
+        <li>Mitéra</li>
+        <li>Moonpie</li>
+        <li>mymy</li>
+        <li>NATHALIA</li>
+        <li>Pony</li>
+        <li>Profesito</li>
+        <li>Regal86</li>
+        <li>RHR</li>
+        <li>Robertitx</li>
+        <li>Rosa Pistola</li>
+        <li>RTCHRD</li>
+        <li>Saffaire</li>
+        <li>Salenie</li>
+        <li>Sánlo</li>
+        <li>Saint Caboclo</li>
+        <li>S.I.M</li>
+        <li>Skye</li>
+        <li>Skiis</li>
+        <li>Syd</li>
+        <li>Swordes</li>
+        <li>Tegh</li>
+        <li>TH4YS</li>
+        <li>Toccororo</li>
+        <li>TSVI</li>
+        <li>Vasceii</li>
+        <li>Victoria Moura</li>
+        <li>W.E.B Da Girl</li>
+        <li>Xtcemi</li>
+        <li>YANNI</li>
+        <li>Yuca Frita</li>
+      </ul>
 
-      <details class="show" name="archive">
-        <summary class="show-row">
-          <span class="show-no">02</span>
-          <h2 class="show-title"><span class="label label--pink">Arca’s ‘XXXXX’ Official Listening Party</span></h2>
-          <span class="show-date"><span class="label label--blue">07/30/2026</span></span>
-          <span class="show-lineup">De Alma, Julia Rose, Profesito</span>
-          <span class="show-toggle" aria-hidden="true"></span>
-        </summary>
-        <div class="show-body">
-          <div class="strip" data-track tabindex="0" aria-label="Arca’s ‘XXXXX’ Official Listening Party photos">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/r3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/j3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/l3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/q3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/o3150692.jpg" alt="Arca’s ‘XXXXX’ Official Listening Party" loading="lazy">
-          </div>
-          <div class="track-nav" data-nav hidden>
-          <button class="label" type="button" data-prev aria-label="Previous">←</button>
-          <span class="label" data-count aria-live="polite"></span>
-          <button class="label" type="button" data-next aria-label="Next">→</button>
-        </div>
-        </div>
-      </details>
-
-      <details class="show" name="archive">
-        <summary class="show-row">
-          <span class="show-no">03</span>
-          <h2 class="show-title"><span class="label label--pink">San Francisco Pride 2026</span></h2>
-          <span class="show-date"><span class="label label--blue">06/26/2026</span></span>
-          <span class="show-lineup">Afakasi Papi, Amarji King, Byrell the Great, Discnogirl, Girls on Deck, Julia Rose, Just Another Bitch</span>
-          <span class="show-toggle" aria-hidden="true"></span>
-        </summary>
-        <div class="show-body">
-          <div class="strip" data-track tabindex="0" aria-label="San Francisco Pride 2026 photos">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/n3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/m3150682.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/c3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/t3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/e3150683.jpg" alt="San Francisco Pride 2026" loading="lazy">
-          </div>
-          <div class="track-nav" data-nav hidden>
-          <button class="label" type="button" data-prev aria-label="Previous">←</button>
-          <span class="label" data-count aria-live="polite"></span>
-          <button class="label" type="button" data-next aria-label="Next">→</button>
-        </div>
-        </div>
-      </details>
-
-      <details class="show" name="archive">
-        <summary class="show-row">
-          <span class="show-no">04</span>
-          <h2 class="show-title"><span class="label label--pink">San Francisco Carnaval 2026</span></h2>
-          <span class="show-date"><span class="label label--blue">05/23/2026</span></span>
-          <span class="show-lineup">Akumen b2b Andy Oro, Andyland b2b Maliciel, Alírio, Azúcar, Femme Jatale, J. Córdova, Julia Rose, Yuca Frita</span>
-          <span class="show-toggle" aria-hidden="true"></span>
-        </summary>
-        <div class="show-body">
-          <div class="strip" data-track tabindex="0" aria-label="San Francisco Carnaval 2026 photos">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/i3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/j3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/w3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/p3150673.jpg" alt="San Francisco Carnaval 2026" loading="lazy">
-          </div>
-          <div class="track-nav" data-nav hidden>
-          <button class="label" type="button" data-prev aria-label="Previous">←</button>
-          <span class="label" data-count aria-live="polite"></span>
-          <button class="label" type="button" data-next aria-label="Next">→</button>
-        </div>
-        </div>
-      </details>
-
-      <details class="show" name="archive">
-        <summary class="show-row">
-          <span class="show-no">05</span>
-          <h2 class="show-title"><span class="label label--pink">New Year’s Eve 2025</span></h2>
-          <span class="show-date"><span class="label label--blue">12/31/2025</span></span>
-          <span class="show-lineup">De Alma, DJ Juanny, Doctor Jeep, felipe d., Girls on Deck, Julia Rose, mymy, RTCHRD, Rosa Pistola, SAMMI</span>
-          <span class="show-toggle" aria-hidden="true"></span>
-        </summary>
-        <div class="show-body">
-          <div class="strip" data-track tabindex="0" aria-label="New Year’s Eve 2025 photos">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/n3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img style="--ar: 1.499;" width="1400" height="934" src="assets/archive/h3150661.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/v3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
-            <img style="--ar: 0.666;" width="933" height="1400" src="assets/archive/m3150662.jpg" alt="New Year’s Eve 2025" loading="lazy">
-          </div>
-          <div class="track-nav" data-nav hidden>
-          <button class="label" type="button" data-prev aria-label="Previous">←</button>
-          <span class="label" data-count aria-live="polite"></span>
-          <button class="label" type="button" data-next aria-label="Next">→</button>
-        </div>
-        </div>
-      </details>
-
+      <div class="archive-photos">
+        <img src="assets/archive/p3150689.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/x3150689.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/v3150662.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/l3150692.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/n3150661.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/m3150662.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/i3150673.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="solo">
+        <img src="assets/archive/q3150692.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="group">
+        <img src="assets/archive/j3150692.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="group">
+        <img src="assets/archive/d3150689.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/c3150689.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/r3150692.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/o3150692.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/n3150683.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/m3150682.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/c3150683.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/t3150683.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/e3150683.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/j3150673.jpg" width="933" height="1400" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/w3150673.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/p3150673.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+        <img src="assets/archive/h3150661.jpg" width="1400" height="934" alt="" loading="lazy" data-kind="crowd">
+      </div>
     </div>
-
   </section>
 
   <main>

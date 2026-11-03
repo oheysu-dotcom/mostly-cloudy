@@ -11,6 +11,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="has-overlay">
+  <!-- Grain texture for bold type (used by class="grain") -->
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" result="specks"
+        values="0 0 0 0 0.3
+                0 0 0 0 0.3
+                0 0 0 0 0.3
+                -2.4 0 0 0 0.92"/>
+      <feComposite in="specks" in2="SourceGraphic" operator="in" result="grainOnShape"/>
+      <feBlend in="grainOnShape" in2="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
   <canvas class="backdrop" aria-hidden="true"></canvas>
   <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
 
@@ -30,20 +43,12 @@
       changing the name, bio, mix link and photo. The "id" and "href" must match.
     -->
     <div class="roster">
-      <nav class="roster-list" role="tablist" aria-label="Artists">
-        <a class="roster-name" role="tab" id="tab-julia-rose" href="#artist-julia-rose" aria-controls="artist-julia-rose" aria-selected="true"><span class="roster-no">01</span>Julia Rose</a>
-        <a class="roster-name" role="tab" id="tab-dina" href="#artist-dina" aria-controls="artist-dina" aria-selected="false"><span class="roster-no">02</span>Dina</a>
-        <a class="roster-name" role="tab" id="tab-felipe-d" href="#artist-felipe-d" aria-controls="artist-felipe-d" aria-selected="false"><span class="roster-no">03</span>felipe d.</a>
-        <a class="roster-name" role="tab" id="tab-andyland" href="#artist-andyland" aria-controls="artist-andyland" aria-selected="false"><span class="roster-no">04</span>Andyland</a>
+      <nav class="roster-list grain" role="tablist" aria-label="Artists">
+        <a class="roster-name" role="tab" id="tab-dina" href="#artist-dina" aria-controls="artist-dina" aria-selected="true"><span class="roster-no">01</span>Dina</a>
+        <a class="roster-name" role="tab" id="tab-julia-rose" href="#artist-julia-rose" aria-controls="artist-julia-rose" aria-selected="false"><span class="roster-no">02</span>Julia Rose</a>
+        <a class="roster-name" role="tab" id="tab-andyland" href="#artist-andyland" aria-controls="artist-andyland" aria-selected="false"><span class="roster-no">03</span>Andyland</a>
+        <a class="roster-name" role="tab" id="tab-felipe-d" href="#artist-felipe-d" aria-controls="artist-felipe-d" aria-selected="false"><span class="roster-no">04</span>felipe d.</a>
       </nav>
-
-      <article class="artist" id="artist-julia-rose" role="tabpanel" aria-labelledby="tab-julia-rose">
-        <img class="artist-photo" width="1000" height="1000" src="assets/artists/julia-rose.jpg" alt="Julia Rose" loading="lazy">
-        <div class="artist-text">
-          <p class="artist-bio">Mostly Cloudy founder, Julia Rose, built this platform out of a love for music, an inspiration from her Latin roots, and a loyalty to her native city of San Francisco. Having shared lineups with artists like Rosa Pistola, Alírio, RHR and Only Fire, her forward-thinking blends of sensual Latin club varieties and left-field electronic sounds have established her as a fixture in the Bay Area’s nightlife scene.</p>
-          <a class="label" href="https://www.youtube.com/watch?v=O3wMND2bOzo" target="_blank" rel="noopener">Link to mix ↗</a>
-        </div>
-      </article>
 
       <article class="artist" id="artist-dina" role="tabpanel" aria-labelledby="tab-dina">
         <img class="artist-photo" width="1000" height="1000" src="assets/artists/dina.jpg" alt="Dina" loading="lazy">
@@ -52,20 +57,25 @@
           <span class="label">Link to mix ↗</span>
         </div>
       </article>
-
-      <article class="artist" id="artist-felipe-d" role="tabpanel" aria-labelledby="tab-felipe-d">
-        <img class="artist-photo" width="1000" height="1000" src="assets/artists/felipe-d.jpg" alt="felipe d." loading="lazy">
+      <article class="artist" id="artist-julia-rose" role="tabpanel" aria-labelledby="tab-julia-rose">
+        <img class="artist-photo" width="1000" height="1000" src="assets/artists/julia-rose.jpg" alt="Julia Rose" loading="lazy">
         <div class="artist-text">
-          <p class="artist-bio">Originally from Brazil, felipe d. is a San Francisco-based DJ moving between techno, club and the percussive edge of Brazilian electronic music. The long-time Mostly Cloudy resident has played alongside Byrell The Great, COBRAH, Honey Dijon and River Moon, among others. In the past year, he has played in Los Angeles, New York City, Seattle and Washington D.C., as well as across the Bay Area at parties including Squish, BOOF, Rhonda, and more. Rooted in São Paulo’s raw and relentless rave scene, felipe d. continues to reshape queer nightlife in San Francisco with an experimental and energetic experience of distorted loops, unexpected turns and uncensored vocals.</p>
-          <a class="label" href="https://www.youtube.com/watch?v=tNnNAi94ewg" target="_blank" rel="noopener">Link to mix ↗</a>
+          <p class="artist-bio">Mostly Cloudy founder, Julia Rose, built this platform out of a love for music, an inspiration from her Latin roots, and a loyalty to her native city of San Francisco. Having shared lineups with artists like Rosa Pistola, Alírio, RHR and Only Fire, her forward-thinking blends of sensual Latin club varieties and left-field electronic sounds have established her as a fixture in the Bay Area’s nightlife scene.</p>
+          <a class="label" href="https://www.youtube.com/watch?v=O3wMND2bOzo" target="_blank" rel="noopener">Link to mix ↗</a>
         </div>
       </article>
-
       <article class="artist" id="artist-andyland" role="tabpanel" aria-labelledby="tab-andyland">
         <img class="artist-photo" width="1000" height="1000" src="assets/artists/andyland.jpg" alt="Andyland" loading="lazy">
         <div class="artist-text">
           <p class="artist-bio">Andyland is a San Francisco-based DJ blending queer club culture with the unfiltered energy of a European rave. Andyland crafts sensual, rhythmic sets built for movement and hypnotic energy that pull dancers deeper into the moment. Having shared the stage with DJ Sexstasy, Only Fire and EQ, Andyland is quickly becoming a definitive force in today’s fast-paced and genre-fluid electronic circuit.</p>
           <a class="label" href="https://soundcloud.com/4ndyland/4am-in-the-warehouse" target="_blank" rel="noopener">Link to mix ↗</a>
+        </div>
+      </article>
+      <article class="artist" id="artist-felipe-d" role="tabpanel" aria-labelledby="tab-felipe-d">
+        <img class="artist-photo" width="1000" height="1000" src="assets/artists/felipe-d.jpg" alt="felipe d." loading="lazy">
+        <div class="artist-text">
+          <p class="artist-bio">Originally from Brazil, felipe d. is a San Francisco-based DJ moving between techno, club and the percussive edge of Brazilian electronic music. The long-time Mostly Cloudy resident has played alongside Byrell The Great, COBRAH, Honey Dijon and River Moon, among others. In the past year, he has played in Los Angeles, New York City, Seattle and Washington D.C., as well as across the Bay Area at parties including Squish, BOOF, Rhonda, and more. Rooted in São Paulo’s raw and relentless rave scene, felipe d. continues to reshape queer nightlife in San Francisco with an experimental and energetic experience of distorted loops, unexpected turns and uncensored vocals.</p>
+          <a class="label" href="https://www.youtube.com/watch?v=tNnNAi94ewg" target="_blank" rel="noopener">Link to mix ↗</a>
         </div>
       </article>
 

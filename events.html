@@ -11,6 +11,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="has-overlay">
+  <!-- Grain texture for bold type (used by class="grain") -->
+  <svg class="defs" aria-hidden="true" focusable="false">
+    <filter id="grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix in="noise" type="matrix" result="specks"
+        values="0 0 0 0 0.3
+                0 0 0 0 0.3
+                0 0 0 0 0.3
+                -2.4 0 0 0 0.92"/>
+      <feComposite in="specks" in2="SourceGraphic" operator="in" result="grainOnShape"/>
+      <feBlend in="grainOnShape" in2="SourceGraphic" mode="multiply"/>
+    </filter>
+  </svg>
   <canvas class="backdrop" aria-hidden="true"></canvas>
   <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
 
@@ -38,20 +51,20 @@
     <div class="track events" data-track tabindex="0" aria-label="Upcoming events">
 
       <article class="event" style="--accent: #9a7466; --accent-text: #ffffff;">
-        <h2 class="event-title"><span>EQ [ live ]</span></h2>
+        <h2 class="event-title"><span class="grain">EQ [ live ]</span></h2>
         <img loading="lazy" class="event-poster" width="800" height="1000" src="assets/events/eq-live.jpg" alt="EQ live poster">
-        <div class="event-info">
+        <div class="event-info grain">
           <p class="event-venue">@The Great Northern</p>
-          <p class="label label--blue">Fri 11/6/26<br>10p-3a</p>
+          <p class="event-when">Fri 11/6/26<br>10p-3a</p>
         </div>
       </article>
 
       <article class="event" style="--accent: #827f81; --accent-text: #d4d4d4;">
-        <h2 class="event-title"><span>Regal+10010</span></h2>
+        <h2 class="event-title"><span class="grain">Regal+10010</span></h2>
         <img loading="lazy" class="event-poster" width="800" height="1000" src="assets/events/regal-10010.jpg" alt="Regal86 + 10010 poster">
-        <div class="event-info">
+        <div class="event-info grain">
           <p class="event-venue">@Monarch</p>
-          <p class="label label--blue">Sat 11/14/26<br>9p-3a</p>
+          <p class="event-when">Sat 11/14/26<br>9p-3a</p>
         </div>
       </article>
 

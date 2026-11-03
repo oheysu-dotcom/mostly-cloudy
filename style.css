@@ -7,7 +7,7 @@
    Type       One family (Inter Tight), five sizes. Scale and weight carry
               hierarchy; the colored highlight labels carry category.
    Labels     The highlight-label is the site's signature: white for actions,
-              blue for dates and times, pink for show titles.
+              the menu tabs share that look; pink marks where you are.
    Layers     backdrop 0 · logo 1 · close-catcher 1 · strip 2 · panel 3
    ========================================================================== */
 
@@ -16,12 +16,10 @@
   --bg: #a8a8a8;
   --text: #ffffff;
   --pink: #e7327a;
-  --green: #acba91;
-  --blue: #d8e1ec;
-  --panel: #564e2a;
-  --panel-text: #f2efe6;
-  --panel-muted: rgba(242, 239, 230, 0.72);
-  --rule: rgba(242, 239, 230, 0.22);
+  --panel: rgba(58, 57, 56, 0.58);        /* smoked glass: the background shows through */
+  --panel-text: #f4f3f1;
+  --panel-muted: rgba(244, 243, 241, 0.72);
+  --rule: rgba(244, 243, 241, 0.22);
   --label-text: #8d8d8d;
   --ink: #1d1d1b;
 
@@ -94,8 +92,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 a.label:hover, button.label:hover { color: var(--pink); }
 
-.label--blue  { background: var(--blue);  color: var(--ink); white-space: normal; }
-.label--pink  { background: var(--pink);  color: #fff; font-weight: 600; white-space: normal; }
+/* Grain on bold type: specks multiplied over the letters (see the SVG filter in each page) */
+.grain { filter: url(#grain); }
+
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* --------------------------------------------------------------------------
    Background: canvas + bouncing logo
@@ -167,14 +167,15 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   letter-spacing: -0.14em;
   line-height: 1.1;
   padding: 0.25em 0 0.35em;
-  color: var(--pink);
-  background: var(--green);
+  color: var(--label-text);
+  background: #fff;
   text-decoration: none;
   transition: color var(--t-fast), background-color var(--t-fast);
 }
 
-.menu a:hover,
-.menu a[aria-current="page"] { color: var(--green); background: var(--pink); }
+/* Tabs match the inquiry buttons; pink marks hover and the open page */
+.menu a:hover { color: var(--pink); }
+.menu a[aria-current="page"] { color: #fff; background: var(--pink); }
 
 .menu .soon { cursor: default; opacity: 0.7; }
 
@@ -234,6 +235,8 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   display: flex;
   flex-direction: column;
   background: var(--panel);
+  -webkit-backdrop-filter: blur(18px) saturate(0.6);
+  backdrop-filter: blur(18px) saturate(0.6);
   color: var(--panel-text);
   container-type: size;             /* children size themselves to the panel (cqh / cqw) */
   animation: panel-in var(--t-med) var(--ease) both;
@@ -278,18 +281,17 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 }
 
 .overlay-body,
-.overlay > .shows,
+.overlay > .archive,
 .overlay > .roster,
 .overlay > .track {
   flex: 1;
   min-height: 0;
 }
 
-/* Horizontal track: shared by Events and Archive strips
+/* Horizontal track (Events)
    -------------------------------------------------------------------------- */
 
-.track,
-.strip {
+.track {
   display: flex;
   gap: var(--gutter);
   overflow-x: auto;
@@ -301,8 +303,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   outline-offset: -2px;
 }
 
-.track > *,
-.strip > * { flex: none; scroll-snap-align: start; }
+.track > * { flex: none; scroll-snap-align: start; }
 
 .track-nav { display: flex; gap: var(--s-1); }
 .track-nav[hidden] { display: none; }
@@ -381,83 +382,71 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   gap: var(--s-2);
 }
 
-.event-venue {
-  font-size: var(--fs-md);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+/* Venue and time share the titles' typeface; the time is set in pink */
+.event-venue,
+.event-when {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
 }
+
+.event-when { color: var(--pink); }
 
 /* --------------------------------------------------------------------------
-   Archive — an index of shows; each opens into a filmstrip of photos
+   Archive — one big line of numbers, then every artist who has played
+   (left) beside photos of them (right); the whole panel scrolls as one
    -------------------------------------------------------------------------- */
 
-.shows {
+.archive {
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0 var(--pad) var(--pad);
-  scroll-padding-top: var(--s-3);
-}
-
-.show { border-bottom: 1px solid var(--rule); }
-
-.show-row {
+  padding: var(--pad);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--gutter);
-  align-items: baseline;
-  padding: var(--s-3) 0;
+  column-gap: var(--gutter);
+  align-items: start;
+}
+
+.stat {
+  grid-column: 1 / -1;
+  margin-bottom: var(--s-6);
+  font-size: clamp(30px, 4.2vw, 84px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.stat em { font-style: normal; color: var(--pink); }
+
+.archive-names {
+  grid-column: 1 / 6;
   list-style: none;
-  cursor: pointer;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.045em;
 }
 
-.show-row::-webkit-details-marker { display: none; }
+.archive-names li { transition: color var(--t-fast); }
+.archive-names li:hover { color: var(--pink); }
 
-.show-no     { grid-column: 1;      color: var(--panel-muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
-.show-title  { grid-column: 2 / 6;  font-size: inherit; font-weight: inherit; }
-.show-date   { grid-column: 6 / 8; }
-.show-lineup { grid-column: 8 / 12; color: var(--panel-muted); font-size: var(--fs-sm); line-height: 1.3; }
-
-.show-toggle {
-  grid-column: 12;
-  justify-self: end;
-  font-size: var(--fs-md);
-  line-height: 0.6;
-  color: var(--panel-muted);
-  transition: transform var(--t-med) var(--ease), color var(--t-fast);
+/* Two columns of photos; extras at the end are hidden by script.js so the
+   photos never run longer than the list of names */
+.archive-photos {
+  grid-column: 6 / -1;
+  columns: 2;
+  column-gap: var(--gutter);
 }
 
-.show-toggle::before { content: "+"; }
-.show[open] .show-toggle { transform: rotate(45deg); color: var(--pink); }
-.show-row:hover .show-toggle,
-.show-row:hover .show-no { color: var(--pink); }
-
-.show-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-3);
-  padding-bottom: var(--s-5);
-  animation: reveal var(--t-med) var(--ease) both;
+.archive-photos img {
+  width: 100%;
+  margin-bottom: var(--gutter);
+  break-inside: avoid;
 }
 
-.show-body .track-nav { align-self: flex-end; }
-
-@keyframes reveal {
-  from { opacity: 0; transform: translateY(calc(-1 * var(--s-2))); }
-}
-
-/* Every photo shares one height, so landscape and portrait sit on a common line */
-/* Justified row: every photo shares one height and the row fills the full
-   width exactly. Each photo grows in proportion to its shape (--ar). */
-.strip { overflow-x: hidden; }
-
-.strip img {
-  flex: var(--ar, 1) 1 0;
-  width: 0;
-  min-width: 0;
-  height: auto;
-  aspect-ratio: var(--ar, 1);
-  object-fit: cover;
-}
+.archive-photos img[hidden] { display: none; }
 
 /* --------------------------------------------------------------------------
    Artists — the same spread as Events, so the two pages rhyme:
@@ -566,9 +555,8 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1024px) {
-  .show-title  { grid-column: 2 / 7; }
-  .show-date   { grid-column: 7 / 9; }
-  .show-lineup { grid-column: 9 / 12; }
+  .archive-names { grid-column: 1 / 6; }
+  .archive-photos { grid-column: 6 / -1; columns: 1; }
 }
 
 /* --------------------------------------------------------------------------
@@ -593,15 +581,8 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .event-title, .event-info { grid-column: 1; grid-row: auto; }
   .event-title { font-size: clamp(36px, 11vw, 56px); }
 
-  .show-row { grid-template-columns: 2rem 1fr auto; row-gap: var(--s-2); }
-  .show-no { grid-column: 1; }
-  .show-title { grid-column: 2; }
-  .show-toggle { grid-column: 3; grid-row: 1; }
-  .show-date { grid-column: 2 / -1; }
-  .show-lineup { grid-column: 2 / -1; }
-  /* On phones the row would be too small, so it becomes a swipeable strip */
-  .strip { --strip-h: clamp(180px, 52cqh, 420px); overflow-x: auto; }
-  .strip img { flex: none; height: var(--strip-h); width: auto; }
+  .archive-names { grid-column: 1 / 7; font-size: var(--fs-md); }
+  .archive-photos { grid-column: 7 / -1; columns: 1; }
 
   .roster { display: block; }
   .roster-list { flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
