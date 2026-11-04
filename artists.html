@@ -24,7 +24,7 @@
       <feBlend in="grainOnShape" in2="SourceGraphic" mode="multiply"/>
     </filter>
   </svg>
-  <canvas class="backdrop" aria-hidden="true"></canvas>
+  <video class="backdrop" src="assets/video/background.mp4" poster="assets/video/background.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
   <img class="bouncer" src="assets/logo.png" alt="" aria-hidden="true">
 
   <!-- Clicking anywhere outside the panel goes back to the home page -->
@@ -34,7 +34,7 @@
     <header class="overlay-head">
       <h1 id="overlay-title" tabindex="-1">Artists</h1>
       <div class="overlay-actions">
-        <a class="label" href="index.html" data-close>close ×</a>
+        <a class="close-x" href="index.html" data-close aria-label="Close">×</a>
       </div>
     </header>
 

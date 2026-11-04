@@ -98,15 +98,21 @@ a.label:hover, button.label:hover { color: var(--pink); }
 .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* --------------------------------------------------------------------------
-   Background: canvas + bouncing logo
+   Background: looping video + bouncing logo
    -------------------------------------------------------------------------- */
 
+/* The video always covers the whole screen; whatever doesn't fit the
+   screen's shape is trimmed evenly from the edges */
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: center;
+  background: var(--bg) url("assets/video/background.jpg") center / cover no-repeat;
+  pointer-events: none;
 }
 
 .bouncer {
@@ -138,10 +144,10 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   left: var(--edge);
   top: calc(100% - var(--strip));   /* top edge sits on the split line */
   /* three grid columns wide */
-  width: max(calc((100vw - 2 * var(--edge) - 11 * var(--gutter)) / 12 * 3 + 2 * var(--gutter)), 280px);
+  width: max(calc((100vw - 2 * var(--edge) - 11 * var(--gutter)) / 12 * 3.5 + 3 * var(--gutter)), 300px);
   font-weight: 500;
-  font-size: var(--fs-sm);
-  line-height: 1.3;
+  font-size: clamp(14px, 0.35vw + 11px, 18px);
+  line-height: 1.28;
   letter-spacing: -0.005em;
   text-wrap: pretty;
   margin-top: -0.2em;               /* optical: cap height lines up with the menu */
@@ -271,6 +277,20 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   letter-spacing: -0.025em;
   outline: none;
 }
+
+/* Close: just an × in the panel's corner */
+.close-x {
+  display: block;
+  margin-left: var(--s-2);
+  color: var(--panel-text);
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  line-height: 0.6;
+  text-decoration: none;
+  transition: color var(--t-fast), transform var(--t-fast);
+}
+
+.close-x:hover { color: var(--pink); transform: rotate(90deg); }
 
 .overlay-actions {
   display: flex;
@@ -567,7 +587,7 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 @media (max-width: 700px) {
   :root { --strip: clamp(250px, 46vh, 420px); --gutter: 8px; }
 
-  .intro { width: calc(100% - 2 * var(--edge) - var(--menu-w, 150px) - var(--s-4)); }
+  .intro { width: calc(100% - 2 * var(--edge) - var(--menu-w, 150px) - var(--s-4)); font-size: 14px; }
 
   .has-overlay .intro { display: none; }
   .has-overlay .menu { top: auto; bottom: var(--edge); }
