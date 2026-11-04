@@ -112,6 +112,7 @@ a.label:hover, button.label:hover { color: var(--pink); }
   object-fit: cover;
   object-position: center;
   background: var(--bg) url("assets/video/background.jpg") center / cover no-repeat;
+  transform: scaleY(-1);            /* flipped upside down: the top edge becomes the bottom */
   pointer-events: none;
 }
 
