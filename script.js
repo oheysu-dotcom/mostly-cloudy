@@ -11,7 +11,9 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 })();
 
 // ---------- Bouncing logo ----------
-// Bounces the logo around the screen like an old DVD screensaver.
+// Bounces the logo around the screen like an old DVD screensaver. Hovering
+// over it gives it a little jolt forward: it shoots ahead in the direction
+// it's already travelling, then eases back to its normal drift.
 (function () {
   var logo = document.querySelector(".bouncer");
   if (!logo) return;
@@ -22,19 +24,45 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   var dx = speed;
   var dy = speed;
 
+  var boost = 1;        // speed multiplier; jumps up on a jolt, then settles back to 1
+  var pop = 1;          // brief scale-up that goes with the jolt
+  var mouse = null;     // last known pointer position
+  var wasOver = false;
+
+  window.addEventListener("mousemove", function (e) { mouse = { x: e.clientX, y: e.clientY }; });
+  document.addEventListener("mouseleave", function () { mouse = null; });
+
+  // The logo ignores clicks (so it never blocks links), so hovering is
+  // detected by checking whether the pointer is over its visible middle
+  function pointerOver() {
+    if (!mouse) return false;
+    var w = logo.offsetWidth, h = logo.offsetHeight;
+    var inside = mouse.x > x + w * 0.08 && mouse.x < x + w * 0.92 && mouse.y > y + h * 0.1 && mouse.y < y + h * 0.9;
+    if (!inside) return false;
+    var top = document.elementFromPoint(mouse.x, mouse.y);
+    return !(top && top.closest(".overlay"));   // not while it's hidden behind a panel
+  }
+
   function step() {
     var maxX = window.innerWidth - logo.offsetWidth;
     var maxY = window.innerHeight - logo.offsetHeight;
 
-    x += dx;
-    y += dy;
+    var over = pointerOver();
+    if (over && !wasOver) { boost = 9; pop = 1.08; }
+    wasOver = over;
+
+    boost += (1 - boost) * 0.06;
+    pop += (1 - pop) * 0.12;
+
+    x += dx * boost;
+    y += dy * boost;
 
     if (x <= 0) { x = 0; dx = Math.abs(dx); }
     if (x >= maxX) { x = maxX; dx = -Math.abs(dx); }
     if (y <= 0) { y = 0; dy = Math.abs(dy); }
     if (y >= maxY) { y = maxY; dy = -Math.abs(dy); }
 
-    logo.style.transform = "translate(" + x + "px, " + y + "px)";
+    logo.style.transform = "translate(" + x + "px, " + y + "px) scale(" + pop + ")";
     if (!reduceMotion) requestAnimationFrame(step);
   }
 
