@@ -569,11 +569,6 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
 .roster[data-dir="down"] .artist:not([hidden]) { animation-name: from-below; }
 .roster[data-dir="up"] .artist:not([hidden]) { animation-name: from-above; }
 
-.roster[data-dir="next"] .artist:not([hidden]) { animation-name: from-right; }
-.roster[data-dir="prev"] .artist:not([hidden]) { animation-name: from-left; }
-
-@keyframes from-right { from { opacity: 0; transform: translateX(var(--s-5)); } }
-@keyframes from-left { from { opacity: 0; transform: translateX(calc(-1 * var(--s-5))); } }
 @keyframes from-below { from { opacity: 0; transform: translateY(var(--s-4)); } }
 @keyframes from-above { from { opacity: 0; transform: translateY(calc(-1 * var(--s-4))); } }
 
@@ -641,10 +636,30 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   .archive-names { grid-column: 1 / 7; font-size: var(--fs-md); }
   .archive-photos { grid-column: 7 / -1; columns: 1; }
 
-  .roster { display: block; }
-  .roster-list { flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-bottom: var(--s-4); }
+  /* Artists: one vertical scroll of every artist, under a sticky name bar */
+  .roster { display: block; padding-top: 0; scroll-behavior: auto; }
+  .roster-list {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: var(--s-4);
+    margin: 0 calc(-1 * var(--pad)) var(--s-4);
+    padding: var(--s-3) var(--pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: rgba(66, 65, 64, 0.88);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .roster-list::-webkit-scrollbar { display: none; }
+  .roster-name { flex: none; white-space: nowrap; }
   .roster-name:first-child { margin-top: 0; }
-  .artist { display: flex; flex-direction: column; gap: var(--s-4); }
+  .artist { display: flex; flex-direction: column; gap: var(--s-4); animation: none !important; }
+  .artist + .artist { margin-top: var(--s-6); padding-top: var(--s-6); border-top: 1px solid var(--rule); }
+  .artist:last-child { padding-bottom: var(--s-5); }
   .artist-photo { width: 100%; height: auto; max-width: none; }
   .artist-bio { margin-top: 0; font-size: var(--fs-sm); }
 }

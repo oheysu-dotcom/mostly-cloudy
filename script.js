@@ -141,41 +141,96 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   }
 
   // Artists: show one artist at a time
-  function setupRoster(roster) {
-    var tabs = roster.querySelectorAll('[role="tab"]');
-    roster.classList.add("is-tabbed");
+  // Artists has two modes:
+  //  - Wide screens: a roster on the left shows one artist at a time; click a
+  //    name or scroll the wheel/trackpad to step through.
+  //  - Phones and upright tablets: every artist is stacked in one ordinary
+  //    vertical scroll. A sticky bar of names stays on top, highlights who
+  //    you're looking at, and jumps to an artist when tapped.
+  var stackedQuery = window.matchMedia("(max-width: 700px), (max-width: 1024px) and (orientation: portrait)");
 
-    function select(tab, focus) {
+  function setupRoster(roster) {
+    var tabs = Array.prototype.slice.call(roster.querySelectorAll('[role="tab"]'));
+    var list = roster.querySelector(".roster-list");
+    var panelOf = function (tab) { return document.getElementById(tab.getAttribute("aria-controls")); };
+    var stacked = false;
+
+    function highlight(tab) {
       tabs.forEach(function (t) {
         var on = t === tab;
         t.setAttribute("aria-selected", on ? "true" : "false");
         t.tabIndex = on ? 0 : -1;
-        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
       });
+      if (stacked && list.scrollWidth > list.clientWidth) {
+        list.scrollTo({ left: tab.offsetLeft - list.offsetLeft - 16, behavior: reduceMotion ? "auto" : "smooth" });
+      }
+    }
+
+    function select(tab, focus) {
+      highlight(tab);
+      tabs.forEach(function (t) { panelOf(t).hidden = stacked ? false : t !== tab; });
       if (focus) tab.focus();
     }
 
+    function index() {
+      return tabs.indexOf(roster.querySelector('[aria-selected="true"]'));
+    }
+
+    // Stacked mode: scroll to an artist, leaving room for the sticky bar
+    function scrollToArtist(tab) {
+      var top = panelOf(tab).getBoundingClientRect().top - roster.getBoundingClientRect().top + roster.scrollTop;
+      roster.scrollTo({ top: top - list.offsetHeight - 12, behavior: reduceMotion ? "auto" : "smooth" });
+    }
+
+    // Stacked mode: whichever artist sits just under the bar is the current one
+    function spy() {
+      if (!stacked) return;
+      var line = roster.getBoundingClientRect().top + list.offsetHeight + 40;
+      var current = tabs[0];
+      tabs.forEach(function (t) { if (panelOf(t).getBoundingClientRect().top <= line) current = t; });
+      if (roster.scrollTop + roster.clientHeight >= roster.scrollHeight - 2) current = tabs[tabs.length - 1];
+      if (current.getAttribute("aria-selected") !== "true") highlight(current);
+    }
+
+    function applyMode() {
+      stacked = stackedQuery.matches;
+      roster.classList.toggle("is-tabbed", !stacked);
+      roster.classList.toggle("is-stacked", stacked);
+      var current = tabs[Math.max(0, index())];
+      select(current);
+      if (stacked) { roster.scrollTop = 0; spy(); }
+    }
+
     tabs.forEach(function (tab, i) {
-      tab.addEventListener("click", function (e) { e.preventDefault(); select(tab); });
+      tab.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (stacked) { highlight(tab); scrollToArtist(tab); }
+        else select(tab);
+      });
       tab.addEventListener("keydown", function (e) {
         var next = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (next) { e.preventDefault(); select(tabs[(i + next + tabs.length) % tabs.length], true); }
+        if (!next) return;
+        e.preventDefault();
+        var t = tabs[(i + next + tabs.length) % tabs.length];
+        if (stacked) { highlight(t); t.focus(); scrollToArtist(t); }
+        else select(t, true);
       });
     });
-    select(roster.querySelector('[aria-selected="true"]') || tabs[0]);
 
-    // Scrolling (mouse wheel or trackpad) anywhere on the panel steps through
-    // the artists. One gesture moves one artist: after a switch we wait for
-    // the wheel to go quiet, so a trackpad's coasting doesn't skip ahead.
+    roster.addEventListener("scroll", spy, { passive: true });
+    if (stackedQuery.addEventListener) stackedQuery.addEventListener("change", applyMode);
+    else stackedQuery.addListener(applyMode);
+    applyMode();
+
+    // Wide screens: the mouse wheel or trackpad steps through the artists.
+    // One gesture moves one artist: after a switch we wait for the wheel to
+    // go quiet, so a trackpad's coasting doesn't skip ahead.
     var panel = roster.closest(".overlay") || roster;
     var pending = 0, locked = false, quiet;
 
-    function index() {
-      return Array.prototype.indexOf.call(tabs, roster.querySelector('[aria-selected="true"]'));
-    }
-
     panel.addEventListener("wheel", function (e) {
-      if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;   // sideways scrolls are left alone
+      if (stacked) return;                                     // stacked mode just scrolls normally
+      if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
       var dir = e.deltaY > 0 ? 1 : -1;
 
       // If the artist's text is taller than the panel, scroll it first and
@@ -186,7 +241,7 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
       if (canScroll && !locked) { pending = 0; return; }
 
       var target = index() + dir;
-      if (target < 0 || target >= tabs.length) return;        // no wrap-around at the ends
+      if (target < 0 || target >= tabs.length) return;
       e.preventDefault();
 
       clearTimeout(quiet);
@@ -201,22 +256,6 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
       select(tabs[target]);
       roster.scrollTop = 0;
     }, { passive: false });
-
-    // Phones and tablets: swipe left/right on the artist to go to the next/previous one
-    var touch = null;
-    roster.addEventListener("touchstart", function (e) {
-      touch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }, { passive: true });
-    roster.addEventListener("touchend", function (e) {
-      if (!touch) return;
-      var dx = e.changedTouches[0].clientX - touch.x, dy = e.changedTouches[0].clientY - touch.y;
-      touch = null;
-      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;   // mostly-sideways swipes only
-      var target = index() + (dx < 0 ? 1 : -1);
-      if (target < 0 || target >= tabs.length) return;
-      roster.dataset.dir = dx < 0 ? "next" : "prev";
-      select(tabs[target]);
-    }, { passive: true });
   }
 
   // Archive: count the days since the first show, and hide photos (crowd
