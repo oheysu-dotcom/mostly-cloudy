@@ -201,6 +201,22 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
       select(tabs[target]);
       roster.scrollTop = 0;
     }, { passive: false });
+
+    // Phones and tablets: swipe left/right on the artist to go to the next/previous one
+    var touch = null;
+    roster.addEventListener("touchstart", function (e) {
+      touch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: true });
+    roster.addEventListener("touchend", function (e) {
+      if (!touch) return;
+      var dx = e.changedTouches[0].clientX - touch.x, dy = e.changedTouches[0].clientY - touch.y;
+      touch = null;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;   // mostly-sideways swipes only
+      var target = index() + (dx < 0 ? 1 : -1);
+      if (target < 0 || target >= tabs.length) return;
+      roster.dataset.dir = dx < 0 ? "next" : "prev";
+      select(tabs[target]);
+    }, { passive: true });
   }
 
   // Archive: count the days since the first show, and hide photos (crowd
