@@ -374,3 +374,29 @@ var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
   setup(document);
 })();
+
+// ---------- Inquiry buttons ----------
+// Not everyone has a mail app set up, so the first tap shows the address and
+// copies it; tapping the address after that opens the mail app as usual.
+(function () {
+  document.querySelectorAll("a[data-email]").forEach(function (link) {
+    var original = link.innerHTML;
+    var timer;
+
+    link.addEventListener("click", function (e) {
+      if (link.classList.contains("is-revealed")) return;   // second tap: open the mail app
+      e.preventDefault();
+      var email = link.getAttribute("data-email");
+      link.classList.add("is-revealed");
+      link.innerHTML = email + ' <span class="copied">copied</span>';
+      if (navigator.clipboard) navigator.clipboard.writeText(email).catch(function () {});
+
+      // Go back to the short label after a while
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        link.classList.remove("is-revealed");
+        link.innerHTML = original;
+      }, 8000);
+    });
+  });
+})();

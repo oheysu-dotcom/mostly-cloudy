@@ -237,6 +237,12 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   gap: var(--s-1);
 }
 
+/* Revealed email address, with a small pink "copied" note */
+.contact .is-revealed { color: var(--ink); white-space: nowrap; }
+.contact .copied { margin-left: 0.4em; color: var(--pink); animation: fade-note 2.5s ease forwards; }
+
+@keyframes fade-note { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+
 /* --------------------------------------------------------------------------
    Overlay panel — opens in the top field, never covers the bottom strip
    -------------------------------------------------------------------------- */
