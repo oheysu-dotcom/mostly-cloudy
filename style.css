@@ -608,6 +608,12 @@ main > * { pointer-events: auto; }   /* ...except on the text and links */
   text-wrap: pretty;
 }
 
+/* The archive is long, so while it's open the panel takes most of the screen:
+   the intro steps aside and the menu drops to the bottom corner */
+body:has(.overlay--archive) .intro { display: none; }
+body:has(.overlay--archive) .menu { top: auto; bottom: var(--edge); }
+body:has(.overlay--archive) .overlay { bottom: calc(var(--edge) + var(--menu-h, 140px) + var(--s-3)); }
+
 /* --------------------------------------------------------------------------
    Tablet
    -------------------------------------------------------------------------- */
